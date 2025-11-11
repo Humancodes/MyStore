@@ -14,7 +14,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/contact" className="hover:text-white">
+                <Link href="/contact" className="hover:text-white cursor-pointer">
                   Contact Us
                 </Link>
               </li>
@@ -48,17 +48,17 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#" className="hover:text-white">
+                <Link href="#" className="hover:text-white cursor-pointer">
                   MyStore Fashion
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white">
+                <Link href="#" className="hover:text-white cursor-pointer">
                   MyStore Travel
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white">
+                <Link href="#" className="hover:text-white cursor-pointer">
                   MyStore Wholesale
                 </Link>
               </li>
@@ -181,28 +181,28 @@ export default function Footer() {
             <div className="flex gap-4">
               <Link
                 href="#"
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white cursor-pointer"
                 aria-label="Facebook"
               >
                 <Facebook className="h-5 w-5" />
               </Link>
               <Link
                 href="#"
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white cursor-pointer"
                 aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
               </Link>
               <Link
                 href="#"
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white cursor-pointer"
                 aria-label="YouTube"
               >
                 <Youtube className="h-5 w-5" />
               </Link>
               <Link
                 href="#"
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white cursor-pointer"
                 aria-label="Instagram"
               >
                 <Instagram className="h-5 w-5" />
@@ -216,19 +216,19 @@ export default function Footer() {
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             {/* Left Side - Utility Links */}
             <div className="flex flex-wrap items-center gap-6 text-sm">
-              <Link href="/seller/register" className="flex items-center gap-2 hover:text-white">
+              <Link href="/seller/register" className="flex items-center gap-2 hover:text-white cursor-pointer">
                 <span>🛍️</span>
                 <span>Become a Seller</span>
               </Link>
-              <Link href="/advertise" className="flex items-center gap-2 hover:text-white">
+              <Link href="/advertise" className="flex items-center gap-2 hover:text-white cursor-pointer">
                 <span>⭐</span>
                 <span>Advertise</span>
               </Link>
-              <Link href="/gift-cards" className="flex items-center gap-2 hover:text-white">
+              <Link href="/gift-cards" className="flex items-center gap-2 hover:text-white cursor-pointer">
                 <span>🎁</span>
                 <span>Gift Cards</span>
               </Link>
-              <Link href="/help" className="flex items-center gap-2 hover:text-white">
+              <Link href="/help" className="flex items-center gap-2 hover:text-white cursor-pointer">
                 <span>❓</span>
                 <span>Help Center</span>
               </Link>
@@ -243,13 +243,13 @@ export default function Footer() {
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <span>We accept:</span>
               <div className="flex gap-1">
-                <span className="rounded bg-white px-2 py-1 font-semibold text-blue-600">
+                <span className="rounded bg-white px-2 py-1 font-semibold text-primary">
                   VISA
                 </span>
-                <span className="rounded bg-white px-2 py-1 font-semibold text-red-600">
+                <span className="rounded bg-white px-2 py-1 font-semibold text-primary">
                   MC
                 </span>
-                <span className="rounded bg-white px-2 py-1 font-semibold text-blue-500">
+                <span className="rounded bg-white px-2 py-1 font-semibold text-primary">
                   COD
                 </span>
               </div>

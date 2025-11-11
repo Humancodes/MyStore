@@ -22,9 +22,9 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between gap-4 py-3">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-blue-600">MyStore</div>
-            <span className="hidden text-xs text-yellow-500 sm:block">
+          <Link href="/" className="flex items-center gap-2 cursor-pointer">
+            <div className="text-2xl font-bold text-primary">MyStore</div>
+            <span className="hidden text-xs text-primary sm:block">
               Explore Plus +
             </span>
           </Link>
@@ -64,16 +64,16 @@ export default function Header() {
             </Button>
 
             {/* Cart */}
-            <Link href="/cart">
-              <Button variant="ghost" className="gap-2">
+            <Link href="/cart" className="cursor-pointer">
+              <Button variant="ghost" className="gap-2 cursor-pointer">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="hidden sm:inline">Cart</span>
               </Button>
             </Link>
 
             {/* Become a Seller */}
-            <Link href="/seller/register" className="hidden lg:block">
-              <Button variant="ghost" className="gap-2">
+            <Link href="/seller/register" className="hidden lg:block cursor-pointer">
+              <Button variant="ghost" className="gap-2 cursor-pointer">
                 <Store className="h-5 w-5" />
                 <span>Become a Seller</span>
               </Button>
@@ -93,42 +93,42 @@ export default function Header() {
           <nav className="flex items-center gap-4 overflow-x-auto py-2 scrollbar-hide">
             <Link
               href="/products?category=electronics"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
             >
               <span>📱</span>
               <span>Mobiles & Tablets</span>
             </Link>
             <Link
               href="/products?category=men's clothing"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary"
             >
               <span>👔</span>
               <span>Fashion</span>
             </Link>
             <Link
               href="/products?category=electronics"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
             >
               <span>🎧</span>
               <span>Electronics</span>
             </Link>
             <Link
               href="/products?category=women's clothing"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary"
             >
               <span>🏠</span>
               <span>Home & Furniture</span>
             </Link>
             <Link
               href="/products?category=jewelery"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary"
             >
               <span>💎</span>
               <span>Jewelry</span>
             </Link>
             <Link
               href="/products"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary"
             >
               <span>🛍️</span>
               <span>All Products</span>

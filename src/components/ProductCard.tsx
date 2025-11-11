@@ -23,7 +23,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const placeholder = `https://via.placeholder.com/400x400/e5e7eb/6b7280?text=${encodeURIComponent(product.title.slice(0, 15))}`;
 
   return (
-    <Link href={`/products/${product.id}`}>
+    <Link href={`/products/${product.id}`} className="cursor-pointer">
       <Card className="group h-full flex flex-col hover:shadow-lg transition-shadow duration-300 cursor-pointer overflow-hidden">
         <CardHeader className="p-0">
           <div className="relative w-full aspect-square overflow-hidden rounded-t-lg bg-gray-100">
@@ -57,7 +57,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </CardContent>
         <CardFooter className="p-4 pt-0">
           <div className="w-full">
-            <p className="text-2xl font-bold text-blue-600">
+            <p className="text-2xl font-bold text-primary">
               ${product.price.toFixed(2)}
             </p>
             <p className="text-xs text-gray-500 capitalize mt-1">
