@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, ShoppingCart, User, Store, Menu } from 'lucide-react';
+import { Search, ShoppingCart, User, Store, Menu, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { useAppSelector } from '@/store/hooks';
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
+  const wishlistCount = wishlistItems.length;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,11 +66,27 @@ export default function Header() {
               <span>Login</span>
             </Button>
 
+            {/* Wishlist */}
+            <Link href="/wishlist" className="cursor-pointer">
+              <Button variant="ghost" className="gap-2 cursor-pointer relative">
+                <div className="relative">
+                  <Heart className="h-5 w-5" />
+                  {wishlistCount > 0 && (
+                    <span className="absolute -top-2 -right-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+                      {wishlistCount > 99 ? '99+' : wishlistCount}
+                    </span>
+                  )}
+                </div>
+                <span className="hidden sm:inline">Wishlist</span>
+              </Button>
+            </Link>
+
             {/* Cart */}
             <Link href="/cart" className="cursor-pointer">
-              <Button variant="ghost" className="gap-2 cursor-pointer">
+              <Button variant="ghost" className="gap-2 cursor-pointer relative">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="hidden sm:inline">Cart</span>
+                {/* Cart count badge can be added here later when cart is implemented */}
               </Button>
             </Link>
 
@@ -92,46 +111,46 @@ export default function Header() {
         <div className="container mx-auto px-4">
           <nav className="flex items-center gap-4 overflow-x-auto py-2 scrollbar-hide">
             <Link
-              href="/products?category=electronics"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
-            >
-              <span>📱</span>
-              <span>Mobiles & Tablets</span>
-            </Link>
-            <Link
-              href="/products?category=men's clothing"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary"
-            >
-              <span>👔</span>
-              <span>Fashion</span>
-            </Link>
-            <Link
-              href="/products?category=electronics"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
-            >
-              <span>🎧</span>
-              <span>Electronics</span>
-            </Link>
-            <Link
-              href="/products?category=women's clothing"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary"
-            >
-              <span>🏠</span>
-              <span>Home & Furniture</span>
-            </Link>
-            <Link
-              href="/products?category=jewelery"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary"
-            >
-              <span>💎</span>
-              <span>Jewelry</span>
-            </Link>
-            <Link
               href="/products"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
             >
               <span>🛍️</span>
               <span>All Products</span>
+            </Link>
+            <Link
+              href="/products?categorySlug=clothes"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+            >
+              <span>👔</span>
+              <span>Clothes</span>
+            </Link>
+            <Link
+              href="/products?categorySlug=electronics"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+            >
+              <span>📱</span>
+              <span>Electronics</span>
+            </Link>
+            <Link
+              href="/products?categorySlug=furniture"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+            >
+              <span>🏠</span>
+              <span>Furniture</span>
+            </Link>
+            <Link
+              href="/products?categorySlug=shoes"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+            >
+              <span>👟</span>
+              <span>Shoes</span>
+            </Link>
+            <Link
+              href="/products?categorySlug=others"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+            >
+              <span>💎</span>
+              <span>Others</span>
             </Link>
           </nav>
         </div>

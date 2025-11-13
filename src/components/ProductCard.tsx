@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Star } from 'lucide-react';
 import { useState } from 'react';
+import WishlistButton from '@/components/wishlist/WishlistButton';
 
 interface ProductCardProps {
   product: Product;
@@ -36,6 +37,15 @@ export default function ProductCard({ product }: ProductCardProps) {
               onError={() => setImgError(true)}
               unoptimized={imgError}
             />
+            {/* Wishlist Button - Top Right */}
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+              <WishlistButton
+                product={product}
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-full bg-white/90 hover:bg-white shadow-md border border-gray-200"
+              />
+            </div>
           </div>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col p-4">
