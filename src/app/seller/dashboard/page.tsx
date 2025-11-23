@@ -1,45 +1,108 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { useSellerStatus } from '@/hooks/useSellerStatus';
+import { FirestoreService } from '@/services/firestoreService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Package, ShoppingBag, DollarSign, TrendingUp } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
+interface DashboardStats {
+  totalProducts: number;
+  activeProducts: number;
+  totalOrders: number;
+  totalRevenue: number;
+  conversionRate: number;
+}
+
 export default function SellerDashboardPage() {
   const user = useAppSelector((state) => state.auth.user);
   const { seller } = useSellerStatus();
+  const [stats, setStats] = useState<DashboardStats>({
+    totalProducts: 0,
+    activeProducts: 0,
+    totalOrders: 0,
+    totalRevenue: 0,
+    conversionRate: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
-  const stats = [
+  useEffect(() => {
+    if (user?.uid) {
+      fetchDashboardStats();
+    }
+  }, [user?.uid]);
+
+  const fetchDashboardStats = async () => {
+    if (!user?.uid) return;
+
+    try {
+      const [products, orders] = await Promise.all([
+        FirestoreService.getProductsBySeller(user.uid, 'active'),
+        FirestoreService.getOrdersBySeller(user.uid),
+      ]);
+
+      const totalProducts = products.length;
+      const activeProducts = products.filter(p => p.status === 'active').length;
+      const totalOrders = orders.length;
+      const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+      const conversionRate = totalProducts > 0 
+        ? (totalOrders / totalProducts) * 100 
+        : 0;
+
+      setStats({
+        totalProducts,
+        activeProducts,
+        totalOrders,
+        totalRevenue,
+        conversionRate: Math.round(conversionRate * 10) / 10,
+      });
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const statsCards = [
     {
       title: 'Total Products',
-      value: '0',
+      value: stats.totalProducts.toString(),
       icon: Package,
-      change: '+0%',
-      changeType: 'positive',
+      change: `${stats.activeProducts} active`,
+      changeType: 'positive' as const,
     },
     {
       title: 'Total Orders',
-      value: '0',
+      value: stats.totalOrders.toString(),
       icon: ShoppingBag,
       change: '+0%',
-      changeType: 'positive',
+      changeType: 'positive' as const,
     },
     {
       title: 'Total Revenue',
-      value: '₹0',
+      value: `₹${stats.totalRevenue.toLocaleString()}`,
       icon: DollarSign,
       change: '+0%',
-      changeType: 'positive',
+      changeType: 'positive' as const,
     },
     {
       title: 'Conversion Rate',
-      value: '0%',
+      value: `${stats.conversionRate}%`,
       icon: TrendingUp,
       change: '+0%',
-      changeType: 'positive',
+      changeType: 'positive' as const,
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -56,7 +119,7 @@ export default function SellerDashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
+        {statsCards.map((stat) => {
           const Icon = stat.icon;
           return (
             <Card key={stat.title}>

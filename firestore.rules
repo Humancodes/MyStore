@@ -65,6 +65,10 @@ service cloud.firestore {
       allow delete: if isSeller() && isOwner(resource.data.sellerId) || isAdmin();
     }
     
+    match /products {
+      allow list: if isSeller() || isAdmin() || true;
+    }
+    
     match /orders/{orderId} {
       allow read: if isAuthenticated() && (
         isOwner(resource.data.buyerId) ||
@@ -80,7 +84,7 @@ service cloud.firestore {
     }
     
     match /orders {
-      allow list: if isAdmin();
+      allow list: if isAuthenticated();
     }
     
     match /reviews/{reviewId} {
