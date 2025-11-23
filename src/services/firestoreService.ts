@@ -55,7 +55,8 @@ export class FirestoreService {
     const userRef = doc(db, COLLECTIONS.USERS, uid);
     const userSnap = await getDoc(userRef);
     if (userSnap.exists()) {
-      return { id: userSnap.id, ...userSnap.data() } as FirestoreUser;
+      const data = userSnap.data();
+      return { ...data, uid: data.uid || userSnap.id } as FirestoreUser;
     }
     return null;
   }

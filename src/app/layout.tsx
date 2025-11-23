@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer';
 import ReduxProvider from '@/providers/ReduxProvider';
 import QueryProvider from '@/providers/QueryProvider';
 import AuthProvider from '@/providers/AuthProvider';
+import FirestoreSyncProvider from '@/providers/FirestoreSyncProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,9 +37,11 @@ export default function RootLayout({
         <QueryProvider>
           <ReduxProvider>
             <AuthProvider>
-              <Header />
-              {children}
-              <Footer />
+              <FirestoreSyncProvider>
+                <Header />
+                {children}
+                <Footer />
+              </FirestoreSyncProvider>
             </AuthProvider>
           </ReduxProvider>
         </QueryProvider>

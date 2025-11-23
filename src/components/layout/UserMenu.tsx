@@ -87,15 +87,22 @@ export default function UserMenu() {
           <span>Wishlist</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        {isSeller || isAdmin ? (
+        {isSeller && (
           <DropdownMenuItem onClick={() => router.push('/seller/dashboard')}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Seller Dashboard</span>
           </DropdownMenuItem>
-        ) : (
+        )}
+        {!isSeller && !isAdmin && (
           <DropdownMenuItem onClick={() => router.push('/seller/register')}>
             <Store className="mr-2 h-4 w-4" />
             <span>Become a Seller</span>
+          </DropdownMenuItem>
+        )}
+        {isAdmin && (
+          <DropdownMenuItem onClick={() => router.push('/admin')}>
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            <span>Admin Dashboard</span>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />

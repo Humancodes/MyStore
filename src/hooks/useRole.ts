@@ -1,57 +1,73 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAppSelector } from '@/store/hooks';
-import { getUserRole } from '@/services/roleService';
-import type { UserRole } from '@/types/roles';
-import { DEFAULT_ROLE } from '@/types/roles';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { getUserRoles } from '@/services/roleService';
+import { setUser } from '@/store/slices/authSlice';
+import type { UserRole, UserRoles } from '@/types/roles';
+import { DEFAULT_ROLES } from '@/types/roles';
 
 export function useRole() {
   const user = useAppSelector(state => state.auth.user);
-  const [role, setRole] = useState<UserRole>(DEFAULT_ROLE);
+  const dispatch = useAppDispatch();
+  const [roles, setRoles] = useState<UserRoles>(DEFAULT_ROLES);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchRole() {
+    async function fetchRoles() {
       if (!user?.uid) {
-        setRole(DEFAULT_ROLE);
+        setRoles(DEFAULT_ROLES);
         setLoading(false);
         return;
       }
 
-      if (user.role) {
-        setRole(user.role);
-        setLoading(false);
-        return;
-      }
+      setLoading(true);
 
       try {
-        const userRole = await getUserRole(user.uid);
-        setRole(userRole);
+        const userRoles = await getUserRoles(user.uid);
+        setRoles(userRoles);
+
+        if (
+          userRoles &&
+          JSON.stringify(user.roles) !== JSON.stringify(userRoles)
+        ) {
+          dispatch(setUser({ ...user, roles: userRoles }));
+        }
       } catch (error) {
-        console.error('Error fetching role:', error);
-        setRole(DEFAULT_ROLE);
+        console.error('Error fetching roles:', error);
+        setRoles(DEFAULT_ROLES);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchRole();
-  }, [user]);
+    fetchRoles();
+  }, [user?.uid, dispatch]);
 
-  const isBuyer = role === 'buyer';
-  const isSeller = role === 'seller';
-  const isAdmin = role === 'admin';
-  const hasRole = (requiredRole: UserRole) => role === requiredRole;
-  const hasAnyRole = (roles: UserRole[]) => roles.includes(role);
+  const isBuyer = roles.buyer === true;
+  const isSeller = roles.seller === true;
+  const isAdmin = roles.admin === true;
+
+  const hasRole = (requiredRole: UserRole) => {
+    return roles[requiredRole] === true;
+  };
+
+  const hasAnyRole = (requiredRoles: UserRole[]) => {
+    return requiredRoles.some(role => roles[role] === true);
+  };
+
+  const hasAllRoles = (requiredRoles: UserRole[]) => {
+    return requiredRoles.every(role => roles[role] === true);
+  };
 
   return {
-    role,
+    roles,
     loading,
     isBuyer,
     isSeller,
     isAdmin,
     hasRole,
     hasAnyRole,
+    hasAllRoles,
   };
 }

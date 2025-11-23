@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { setUserRole } from '@/services/roleService';
+import { setUserRoles, addUserRole } from '@/services/roleService';
 import type { UserRole } from '@/types/roles';
 
 let adminAuth: any = null;
@@ -36,7 +36,7 @@ try {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { uid, role, idToken } = body;
+    const { uid, role, idToken, action = 'add' } = body;
 
     if (!uid || !role) {
       return NextResponse.json(
@@ -45,19 +45,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!idToken) {
-      await setUserRole(uid, role as UserRole);
+    if (action === 'add') {
+      await addUserRole(uid, role as UserRole);
+    } else if (action === 'set') {
+      const roles = {
+        buyer: role === 'buyer',
+        seller: role === 'seller',
+        admin: role === 'admin',
+      };
+      await setUserRoles(uid, roles);
+    }
+
+    if (!idToken || !adminAuth) {
       return NextResponse.json({
         success: true,
         message: 'Role set in Firestore',
-      });
-    }
-
-    if (!adminAuth) {
-      await setUserRole(uid, role as UserRole);
-      return NextResponse.json({
-        success: true,
-        message: 'Role set in Firestore (Admin SDK not configured)',
       });
     }
 
@@ -69,7 +71,6 @@ export async function POST(request: NextRequest) {
       }
 
       await adminAuth.setCustomUserClaims(uid, { role });
-      await setUserRole(uid, role as UserRole);
 
       return NextResponse.json({
         success: true,
@@ -77,7 +78,6 @@ export async function POST(request: NextRequest) {
       });
     } catch (error: any) {
       console.error('Error setting custom claims:', error);
-      await setUserRole(uid, role as UserRole);
       return NextResponse.json({
         success: true,
         message: 'Role set in Firestore (custom claims failed)',

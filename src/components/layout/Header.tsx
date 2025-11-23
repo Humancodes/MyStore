@@ -98,13 +98,15 @@ export default function Header() {
             {/* Cart */}
             <CartIcon />
 
-            {/* Become a Seller */}
-            <Link href="/seller/register" className="hidden lg:block cursor-pointer">
-              <Button variant="ghost" className="gap-2 cursor-pointer">
-                <Store className="h-5 w-5" />
-                <span>Become a Seller</span>
-              </Button>
-            </Link>
+            {/* Become a Seller - Only show for non-sellers */}
+            {user && user.roles && !user.roles.seller && (
+              <Link href="/seller/register" className="hidden lg:block cursor-pointer">
+                <Button variant="ghost" className="gap-2 cursor-pointer">
+                  <Store className="h-5 w-5" />
+                  <span>Become a Seller</span>
+                </Button>
+              </Link>
+            )}
 
             {/* Mobile Menu */}
             <Button variant="ghost" size="icon" className="lg:hidden">

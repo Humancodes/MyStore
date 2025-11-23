@@ -5,13 +5,13 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { useAppDispatch } from '@/store/hooks';
 import { setUser, setLoading } from '@/store/slices/authSlice';
 import { auth } from '@/lib/firebase';
-import { getUserRole } from '@/services/roleService';
+import { getUserRoles } from '@/services/roleService';
 import type { AuthUser } from '@/types/auth';
 
 async function extractUserData(user: User | null): Promise<AuthUser | null> {
   if (!user) return null;
 
-  const role = await getUserRole(user.uid);
+  const roles = await getUserRoles(user.uid);
 
   return {
     uid: user.uid,
@@ -19,7 +19,7 @@ async function extractUserData(user: User | null): Promise<AuthUser | null> {
     displayName: user.displayName,
     photoURL: user.photoURL,
     emailVerified: user.emailVerified,
-    role,
+    roles,
   };
 }
 

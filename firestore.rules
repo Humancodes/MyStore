@@ -10,25 +10,30 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
     
-    function getUserRole() {
-      return get(/databases/$(database)/documents/userRoles/$(request.auth.uid)).data.role;
+    function getUserRoles() {
+      let roleDoc = get(/databases/$(database)/documents/userRoles/$(request.auth.uid));
+      return roleDoc != null && roleDoc.data != null && roleDoc.data.roles != null
+        ? roleDoc.data.roles
+        : { buyer: true, seller: false, admin: false };
     }
     
     function isSeller() {
-      return isAuthenticated() && getUserRole() == 'seller';
+      return isAuthenticated() && getUserRoles().seller == true;
     }
     
     function isAdmin() {
-      return isAuthenticated() && getUserRole() == 'admin';
+      return isAuthenticated() && getUserRoles().admin == true;
     }
     
     function isBuyer() {
-      return isAuthenticated() && getUserRole() == 'buyer';
+      return isAuthenticated() && getUserRoles().buyer == true;
     }
     
     match /userRoles/{userId} {
       allow read: if isOwner(userId);
-      allow write: if false;
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if false;
     }
     
     match /users/{userId} {
@@ -40,7 +45,7 @@ service cloud.firestore {
     
     match /sellers/{sellerId} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(resource.data.userId);
+      allow create: if isAuthenticated() && isOwner(request.resource.data.userId);
       allow update: if isSeller() && isOwner(resource.data.userId) || isAdmin();
       allow delete: if isAdmin();
     }

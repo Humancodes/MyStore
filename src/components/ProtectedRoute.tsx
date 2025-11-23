@@ -22,10 +22,12 @@ export default function ProtectedRoute({
   const router = useRouter();
   const user = useAppSelector((state) => state.auth.user);
   const authLoading = useAppSelector((state) => state.auth.loading);
-  const { role, loading: roleLoading, hasAnyRole } = useRole();
+  const { roles, loading: roleLoading, hasAnyRole } = useRole();
 
   useEffect(() => {
-    if (authLoading || roleLoading) return;
+    if (authLoading || roleLoading) {
+      return;
+    }
 
     if (requireAuth && !user) {
       router.push(redirectTo);
@@ -33,7 +35,9 @@ export default function ProtectedRoute({
     }
 
     if (allowedRoles && allowedRoles.length > 0) {
-      if (!hasAnyRole(allowedRoles)) {
+      const hasAccess = hasAnyRole(allowedRoles);
+      
+      if (!hasAccess) {
         router.push('/');
         return;
       }
@@ -55,23 +59,34 @@ export default function ProtectedRoute({
     return null;
   }
 
-  if (allowedRoles && allowedRoles.length > 0 && !hasAnyRole(allowedRoles)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
-          <p className="text-gray-600 mb-4">
-            You don't have permission to access this page.
-          </p>
-          <button
-            onClick={() => router.push('/')}
-            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
-          >
-            Go Home
-          </button>
+  if (allowedRoles && allowedRoles.length > 0) {
+    const hasAccess = hasAnyRole(allowedRoles);
+    
+    if (!hasAccess) {
+      const activeRoles = Object.entries(roles)
+        .filter(([, value]) => value)
+        .map(([key]) => key);
+
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
+            <p className="text-gray-600 mb-4">
+              You don't have permission to access this page.
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              Your roles: {activeRoles.join(', ') || 'none'} | Required: {allowedRoles.join(', ')}
+            </p>
+            <button
+              onClick={() => router.push('/')}
+              className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+            >
+              Go Home
+            </button>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 
   return <>{children}</>;

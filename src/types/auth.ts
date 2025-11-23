@@ -1,4 +1,4 @@
-import type { UserRole } from './roles';
+import type { UserRoles } from './roles';
 
 export interface AuthUser {
   uid: string;
@@ -6,5 +6,5 @@ export interface AuthUser {
   displayName: string | null;
   photoURL: string | null;
   emailVerified: boolean;
-  role?: UserRole;
+  roles?: UserRoles;
 }
