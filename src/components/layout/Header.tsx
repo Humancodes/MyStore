@@ -1,16 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, ShoppingCart, User, Store, Menu, Heart } from 'lucide-react';
+import { Search, User, Store, Menu, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
+import CartIcon from '@/components/cart/CartIcon';
+import UserMenu from '@/components/layout/UserMenu';
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
   const wishlistCount = wishlistItems.length;
+  const user = useAppSelector((state) => state.auth.user);
+  const authLoading = useAppSelector((state) => state.auth.loading);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,11 +64,21 @@ export default function Header() {
               <Search className="h-5 w-5" />
             </Button>
 
-            {/* Login */}
-            <Button variant="ghost" className="hidden gap-2 sm:flex">
-              <User className="h-5 w-5" />
-              <span>Login</span>
-            </Button>
+            {/* Login / User Menu */}
+            {!authLoading && (
+              <>
+                {user ? (
+                  <UserMenu />
+                ) : (
+                  <Link href="/login" className="hidden sm:block cursor-pointer">
+                    <Button variant="ghost" className="gap-2 cursor-pointer">
+                      <User className="h-5 w-5" />
+                      <span>Login</span>
+                    </Button>
+                  </Link>
+                )}
+              </>
+            )}
 
             {/* Wishlist */}
             <Link href="/wishlist" className="cursor-pointer">
@@ -82,13 +96,7 @@ export default function Header() {
             </Link>
 
             {/* Cart */}
-            <Link href="/cart" className="cursor-pointer">
-              <Button variant="ghost" className="gap-2 cursor-pointer relative">
-                <ShoppingCart className="h-5 w-5" />
-                <span className="hidden sm:inline">Cart</span>
-                {/* Cart count badge can be added here later when cart is implemented */}
-              </Button>
-            </Link>
+            <CartIcon />
 
             {/* Become a Seller */}
             <Link href="/seller/register" className="hidden lg:block cursor-pointer">

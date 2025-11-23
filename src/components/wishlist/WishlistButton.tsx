@@ -8,7 +8,7 @@ import type { Product } from '@/types/product';
 
 interface WishlistButtonProps {
   product: Product;
-  variant?: 'default' | 'icon' | 'ghost';
+  variant?: 'default' | 'ghost' | 'outline';
   size?: 'sm' | 'default' | 'lg' | 'icon';
   className?: string;
   showText?: boolean;

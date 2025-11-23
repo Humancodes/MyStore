@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { Facebook, Twitter, Youtube, Instagram } from 'lucide-react';
+import { COMPANY_INFO } from '@/lib/constants';
 
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="container mx-auto px-4 py-12">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-7">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-6">
           {/* ABOUT */}
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase text-white">
@@ -36,30 +37,6 @@ export default function Footer() {
               <li>
                 <Link href="/press" className="hover:text-white">
                   Press
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* GROUP COMPANIES */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase text-white">
-              Group Companies
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="#" className="hover:text-white cursor-pointer">
-                  MyStore Fashion
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white cursor-pointer">
-                  MyStore Travel
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white cursor-pointer">
-                  MyStore Wholesale
                 </Link>
               </li>
             </ul>
@@ -134,17 +111,13 @@ export default function Footer() {
               Mail Us
             </h3>
             <address className="not-italic text-sm leading-relaxed">
-              MyStore Internet Private Limited,
+              {COMPANY_INFO.fullName},
               <br />
-              Buildings Alyssa, Begonia & Clove
+              {COMPANY_INFO.address.street}
               <br />
-              Embassy Tech Village,
+              {COMPANY_INFO.address.city}
               <br />
-              Outer Ring Road, Devarabeesanahalli Village,
-              <br />
-              Bengaluru, 560103,
-              <br />
-              Karnataka, India
+              {COMPANY_INFO.address.location}
             </address>
           </div>
 
@@ -154,22 +127,18 @@ export default function Footer() {
               Registered Office Address
             </h3>
             <address className="not-italic text-sm leading-relaxed">
-              MyStore Internet Private Limited,
+              {COMPANY_INFO.fullName},
               <br />
-              Buildings Alyssa, Begonia & Clove
+              {COMPANY_INFO.address.street}
               <br />
-              Embassy Tech Village,
+              {COMPANY_INFO.address.city}
               <br />
-              Outer Ring Road, Devarabeesanahalli Village,
-              <br />
-              Bengaluru, 560103,
-              <br />
-              Karnataka, India
+              {COMPANY_INFO.address.location}
               <br />
               <br />
-              CIN: U51109KA2012PTC066107
+              CIN: {COMPANY_INFO.cin}
               <br />
-              Telephone: 044-45614700
+              Telephone: {COMPANY_INFO.contact.phone}
             </address>
           </div>
 

@@ -14,6 +14,7 @@ import {
 import { Star } from 'lucide-react';
 import { useState } from 'react';
 import WishlistButton from '@/components/wishlist/WishlistButton';
+import AddToCartButton from '@/components/cart/AddToCartButton';
 
 interface ProductCardProps {
   product: Product;
@@ -66,13 +67,22 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </CardContent>
         <CardFooter className="p-4 pt-0">
-          <div className="w-full">
+          <div className="w-full space-y-2">
             <p className="text-2xl font-bold text-primary">
               ${product.price.toFixed(2)}
             </p>
-            <p className="text-xs text-gray-500 capitalize mt-1">
+            <p className="text-xs text-gray-500 capitalize">
               {product.category}
             </p>
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+              <AddToCartButton
+                product={product}
+                variant="outline"
+                size="sm"
+                className="w-full"
+                showIcon={false}
+              />
+            </div>
           </div>
         </CardFooter>
       </Card>

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Star, ShoppingCart, Zap, CheckCircle2, Truck, Shield } from 'lucide-react';
+import { Star, Zap, CheckCircle2, Truck, Shield } from 'lucide-react';
 import type { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
+import AddToCartButton from '@/components/cart/AddToCartButton';
 
 interface ProductInfoProps {
   product: Product;
@@ -17,13 +18,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const originalPrice = product.price * 1.2;
   const discount = ((originalPrice - product.price) / originalPrice) * 100;
 
-  const handleAddToCart = () => {
-    // TODO: Implement add to cart functionality
-    console.log('Add to cart:', product.id, quantity);
-  };
-
   const handleBuyNow = () => {
     // TODO: Implement buy now functionality
+    // For now, just add to cart and redirect to checkout
     console.log('Buy now:', product.id, quantity);
   };
 
@@ -178,14 +175,12 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <Button
+        <AddToCartButton
+          product={product}
+          quantity={quantity}
           size="lg"
-          className="flex-1 bg-primary text-white hover:bg-primary/90 cursor-pointer text-base font-semibold h-14"
-          onClick={handleAddToCart}
-        >
-          <ShoppingCart className="mr-2 h-5 w-5" />
-          ADD TO CART
-        </Button>
+          className="flex-1 bg-primary text-white hover:bg-primary/90 text-base font-semibold h-14"
+        />
         <Button
           size="lg"
           className="flex-1 bg-primary text-white hover:bg-primary/90 cursor-pointer text-base font-semibold h-14"
