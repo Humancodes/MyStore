@@ -30,10 +30,14 @@ service cloud.firestore {
     }
     
     match /userRoles/{userId} {
-      allow read: if isOwner(userId);
+      allow read: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId);
       allow update: if isOwner(userId);
       allow delete: if false;
+    }
+    
+    match /userRoles {
+      allow list: if isAdmin();
     }
     
     match /users/{userId} {
@@ -44,15 +48,19 @@ service cloud.firestore {
     }
     
     match /sellers/{sellerId} {
-      allow read: if isAuthenticated();
+      allow read: if isAuthenticated() || isAdmin();
       allow create: if isAuthenticated() && isOwner(request.resource.data.userId);
       allow update: if isSeller() && isOwner(resource.data.userId) || isAdmin();
       allow delete: if isAdmin();
     }
     
+    match /sellers {
+      allow list: if isAdmin();
+    }
+    
     match /products/{productId} {
       allow read: if true;
-      allow create: if isSeller() && isOwner(resource.data.sellerId);
+      allow create: if isSeller() && isOwner(request.resource.data.sellerId);
       allow update: if isSeller() && isOwner(resource.data.sellerId) || isAdmin();
       allow delete: if isSeller() && isOwner(resource.data.sellerId) || isAdmin();
     }
@@ -69,6 +77,10 @@ service cloud.firestore {
                      isBuyer() && isOwner(resource.data.buyerId) && 
                      request.resource.data.orderStatus == 'cancelled' &&
                      resource.data.orderStatus == 'pending';
+    }
+    
+    match /orders {
+      allow list: if isAdmin();
     }
     
     match /reviews/{reviewId} {

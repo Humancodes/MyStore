@@ -1,11 +1,14 @@
 'use client';
 
 import { useAppSelector } from '@/store/hooks';
+import { useSellerStatus } from '@/hooks/useSellerStatus';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Package, ShoppingBag, DollarSign, TrendingUp } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export default function SellerDashboardPage() {
   const user = useAppSelector((state) => state.auth.user);
+  const { seller } = useSellerStatus();
 
   const stats = [
     {
@@ -41,7 +44,14 @@ export default function SellerDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Welcome back, {user?.displayName || 'Seller'}!</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-gray-900">Welcome back, {user?.displayName || 'Seller'}!</h2>
+          {seller && (
+            <Badge className="bg-green-100 text-green-800">
+              {seller.status === 'approved' ? 'Approved' : seller.status}
+            </Badge>
+          )}
+        </div>
         <p className="text-gray-600 mt-1">Here's what's happening with your store today</p>
       </div>
 

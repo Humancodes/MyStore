@@ -1,6 +1,9 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { fetchProductById, fetchAllProducts } from '@/services/fakeStoreApi';
+import {
+  fetchProductByIdFromFirestore,
+  fetchAllProductsFromFirestore,
+} from '@/services/productService';
 import ProductImageGallery from '@/components/product/ProductImageGallery';
 import ProductInfo from '@/components/product/ProductInfo';
 import ProductHighlights from '@/components/product/ProductHighlights';
@@ -15,24 +18,22 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const productId = parseInt(id);
-
-  if (isNaN(productId)) {
-    return {
-      title: 'Product Not Found | MyStore',
-      description: 'The product you are looking for does not exist',
-    };
-  }
 
   try {
-    const product = await fetchProductById(productId);
+    const product = await fetchProductByIdFromFirestore(id);
+    if (!product) {
+      return {
+        title: 'Product Not Found | MyStore',
+        description: 'The product you are looking for does not exist',
+      };
+    }
     return {
       title: `${product.title} | MyStore`,
       description: product.description,
       openGraph: {
         title: product.title,
         description: product.description,
-        images: [product.image],
+        images: product.images && product.images.length > 0 ? [product.images[0]] : [],
       },
     };
   } catch {
@@ -51,27 +52,19 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const productId = parseInt(id);
 
-  if (isNaN(productId)) {
-    notFound();
-  }
+  const product = await fetchProductByIdFromFirestore(id);
 
-  let product: Product;
-  try {
-    product = await fetchProductById(productId);
-  } catch (error) {
+  if (!product) {
     notFound();
   }
 
   // Fetch similar products (same category, excluding current product)
-  const allProducts = await fetchAllProducts();
+  const allProducts = await fetchAllProductsFromFirestore({
+    category: product.category,
+  });
   const similarProducts = allProducts
-    .filter(
-      (p) =>
-        p.category.toLowerCase() === product.category.toLowerCase() &&
-        p.id !== product.id
-    )
+    .filter((p) => p.id !== product.id)
     .slice(0, 8);
 
   const breadcrumbItems = [

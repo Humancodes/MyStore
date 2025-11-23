@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Package, ShoppingBag, BarChart3, Settings, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { useSellerStatus } from '@/hooks/useSellerStatus';
+import { useEffect } from 'react';
 
 const navigation = [
   { name: 'Dashboard', href: '/seller/dashboard', icon: LayoutDashboard },
@@ -21,6 +23,26 @@ export default function SellerDashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { seller, loading, isApproved } = useSellerStatus();
+
+  useEffect(() => {
+    if (!loading && seller && !isApproved && pathname !== '/seller/dashboard/pending') {
+      router.push('/seller/dashboard/pending');
+    }
+  }, [loading, seller, isApproved, pathname, router]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!isApproved && pathname !== '/seller/dashboard/pending') {
+    return null;
+  }
 
   return (
     <ProtectedRoute allowedRoles={['seller', 'admin']} requireAuth>

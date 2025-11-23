@@ -39,6 +39,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'encrypted-tbn2.gstatic.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn-imgix.headout.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
     ],
     unoptimized: false,
   },

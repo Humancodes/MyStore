@@ -1,5 +1,7 @@
-import { fetchAllProducts, fetchCategories } from '@/services/fakeStoreApi';
-import ProductsGrid from '@/components/products/ProductsGrid';
+import {
+  fetchAllProductsFromFirestore,
+  getCategoriesFromProducts,
+} from '@/services/productService';
 import ProductsPageClient from '@/components/products/ProductsPageClient';
 
 export const metadata = {
@@ -25,39 +27,40 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const params = await searchParams;
   
   // Build filters from search params
-  const filters: {
+  const firestoreFilters: {
     title?: string;
-    price?: number;
     price_min?: number;
     price_max?: number;
-    categoryId?: number;
-    categorySlug?: string;
-    offset?: number;
-    limit?: number;
+    category?: string;
   } = {};
 
-  if (params.title) filters.title = params.title;
-  if (params.price) filters.price = parseFloat(params.price);
-  if (params.price_min) filters.price_min = parseFloat(params.price_min);
-  if (params.price_max) filters.price_max = parseFloat(params.price_max);
-  if (params.categoryId) filters.categoryId = parseInt(params.categoryId);
-  if (params.categorySlug) filters.categorySlug = params.categorySlug;
-  if (params.offset) filters.offset = parseInt(params.offset);
-  if (params.limit) filters.limit = parseInt(params.limit);
+  if (params.title) firestoreFilters.title = params.title;
+  if (params.price_min) firestoreFilters.price_min = parseFloat(params.price_min);
+  if (params.price_max) firestoreFilters.price_max = parseFloat(params.price_max);
+  if (params.categorySlug) {
+    firestoreFilters.category = params.categorySlug
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
 
-  // Fetch products with filters
-  const products = await fetchAllProducts(filters);
-  const categories = await fetchCategories();
+  // Fetch products from Firestore
+  const products = await fetchAllProductsFromFirestore(firestoreFilters);
+  const categories = await getCategoriesFromProducts();
 
   // Get category name for display
   let categoryName = 'All Products';
-  if (filters.categoryId) {
-    const category = categories.find((c) => c.id === filters.categoryId);
-    categoryName = category?.name || 'Products';
-  } else if (filters.categorySlug) {
-    const category = categories.find((c) => c.slug === filters.categorySlug);
-    categoryName = category?.name || 'Products';
+  if (firestoreFilters.category) {
+    categoryName = firestoreFilters.category;
   }
+
+  // Convert filters for client component
+  const filters = {
+    title: params.title,
+    price_min: params.price_min ? parseFloat(params.price_min) : undefined,
+    price_max: params.price_max ? parseFloat(params.price_max) : undefined,
+    categorySlug: params.categorySlug,
+  };
 
   return (
     <ProductsPageClient

@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { fetchAllProducts } from '@/services/fakeStoreApi';
+import { fetchAllProductsFromFirestore } from '@/services/productService';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Star, TrendingUp } from 'lucide-react';
 import HeroCarousel from '@/components/HeroCarousel';
 import WishlistButton from '@/components/wishlist/WishlistButton';
 
 export default async function HomePage() {
-  // Fetch featured products (first 8 products)
-  const allProducts = await fetchAllProducts();
+  // Fetch featured products from Firestore
+  const allProducts = await fetchAllProductsFromFirestore();
   const featuredProducts = allProducts.slice(0, 8);
   const topDeals = allProducts.slice(8, 24);
   // Products for hero carousel (first 10 products)
