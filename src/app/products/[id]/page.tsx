@@ -20,7 +20,8 @@ export async function generateMetadata({
   const { id } = await params;
 
   try {
-    const product = await fetchProductByIdFromFirestore(id);
+    const productId = isNaN(Number(id)) ? id : Number(id);
+    const product = await fetchProductByIdFromFirestore(productId);
     if (!product) {
       return {
         title: 'Product Not Found | MyStore',
@@ -53,7 +54,8 @@ interface ProductPageProps {
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
 
-  const product = await fetchProductByIdFromFirestore(id);
+  const productId = isNaN(Number(id)) ? id : Number(id);
+  const product = await fetchProductByIdFromFirestore(productId);
 
   if (!product) {
     notFound();
