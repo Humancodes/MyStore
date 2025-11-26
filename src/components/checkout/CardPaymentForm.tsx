@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cardPaymentSchema, type CardPaymentFormData } from '@/lib/validations/checkout';
@@ -8,6 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import StripeCardForm from './StripeCardForm';
 import StripeProvider from '@/providers/StripeProvider';
+import { Loader2 } from 'lucide-react';
 
 interface CardPaymentFormProps {
   onChange: (data: CardPaymentFormData | null) => void;
@@ -25,6 +26,10 @@ export default function CardPaymentForm({
   onStripePaymentError,
 }: CardPaymentFormProps) {
   const [useStripe, setUseStripe] = useState(!!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
+  const [isCreatingIntent, setIsCreatingIntent] = useState(false);
+  const [intentError, setIntentError] = useState<string | null>(null);
   
   const form = useForm<CardPaymentFormData>({
     resolver: zodResolver(cardPaymentSchema),
@@ -80,14 +85,89 @@ export default function CardPaymentForm({
     });
   };
 
+  useEffect(() => {
+    const createPaymentIntent = async () => {
+      if (!useStripe || !amount || amount <= 0 || clientSecret) {
+        return;
+      }
+
+      setIsCreatingIntent(true);
+      setIntentError(null);
+
+      try {
+        const response = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount,
+            currency: 'usd',
+            metadata: {
+              source: 'checkout',
+            },
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to create payment intent');
+        }
+
+        const data = await response.json();
+        setClientSecret(data.clientSecret);
+        setPaymentIntentId(data.paymentIntentId);
+      } catch (error: any) {
+        console.error('Error creating payment intent:', error);
+        setIntentError(error.message || 'Failed to initialize payment');
+        onStripePaymentError?.(error.message || 'Failed to initialize payment');
+      } finally {
+        setIsCreatingIntent(false);
+      }
+    };
+
+    createPaymentIntent();
+  }, [useStripe, amount, clientSecret, onStripePaymentError]);
+
   if (useStripe && amount) {
+    if (isCreatingIntent) {
+      return (
+        <div className="flex flex-col items-center justify-center py-8 space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-gray-600">Initializing secure payment...</p>
+        </div>
+      );
+    }
+
+    if (intentError) {
+      return (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-800">{intentError}</p>
+          <button
+            onClick={() => {
+              setClientSecret(null);
+              setPaymentIntentId(null);
+              setIntentError(null);
+            }}
+            className="mt-2 text-sm text-red-600 hover:underline"
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
+
+    if (!clientSecret) {
+      return null;
+    }
     return (
       <div className="space-y-4">
         <StripeProvider
           options={{
-            mode: 'payment',
-            amount: Math.round(amount * 100),
-            currency: 'usd',
+            clientSecret,
+            appearance: {
+              theme: 'stripe',
+            },
           }}
         >
           <StripeCardForm

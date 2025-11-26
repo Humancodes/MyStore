@@ -37,6 +37,7 @@ export const paymentMethodSchema = z
     paymentMethod: z.enum(['card', 'upi', 'cod']),
     cardDetails: cardPaymentSchema.optional(),
     upiDetails: upiPaymentSchema.optional(),
+    paymentIntentId: z.string().optional(),
   })
   .refine(
     data => {

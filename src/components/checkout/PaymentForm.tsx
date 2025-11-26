@@ -14,6 +14,9 @@ import UpiPaymentForm from './UpiPaymentForm';
 interface PaymentFormProps {
   onSubmit: (data: PaymentMethodFormData) => void;
   defaultValues?: Partial<PaymentMethodFormData>;
+  amount?: number;
+  onStripePaymentSuccess?: (paymentIntentId: string) => void;
+  onStripePaymentError?: (error: string) => void;
 }
 
 export interface PaymentFormRef {
@@ -21,7 +24,7 @@ export interface PaymentFormRef {
 }
 
 const PaymentForm = forwardRef<PaymentFormRef, PaymentFormProps>(
-  ({ onSubmit, defaultValues }, ref) => {
+  ({ onSubmit, defaultValues, amount, onStripePaymentSuccess, onStripePaymentError }, ref) => {
   const [cardDetails, setCardDetails] = useState<CardPaymentFormData | null>(null);
   const [upiDetails, setUpiDetails] = useState<UpiPaymentFormData | null>(null);
 
@@ -141,7 +144,9 @@ const PaymentForm = forwardRef<PaymentFormRef, PaymentFormProps>(
           <CardPaymentForm
             onChange={handleCardDetailsChange}
             defaultValues={defaultValues?.cardDetails}
-            amount={undefined}
+            amount={amount}
+            onStripePaymentSuccess={onStripePaymentSuccess}
+            onStripePaymentError={onStripePaymentError}
           />
         )}
 

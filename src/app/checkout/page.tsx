@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { clearCart } from '@/store/slices/cartSlice';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import ShippingForm, { type ShippingAddressFormData, type ShippingFormRef } from '@/components/checkout/ShippingForm';
-import PaymentForm, { type PaymentMethodFormData, type PaymentFormRef } from '@/components/checkout/PaymentForm';
+import ShippingForm, { type ShippingFormRef } from '@/components/checkout/ShippingForm';
+import PaymentForm, { type PaymentFormRef } from '@/components/checkout/PaymentForm';
+import type { ShippingAddressFormData, PaymentMethodFormData } from '@/lib/validations/checkout';
 import OrderSummary from '@/components/checkout/OrderSummary';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -123,6 +124,19 @@ export default function CheckoutPage() {
     setShowPaymentProcessing(false);
     setCurrentStep('review');
     toast.error(error || 'Payment failed. Please try again.');
+  };
+
+  const handleStripePaymentSuccess = (paymentIntentId: string) => {
+    if (paymentData) {
+      setPaymentData({
+        ...paymentData,
+        paymentIntentId: paymentIntentId,
+      } as PaymentMethodFormData);
+    }
+  };
+
+  const handleStripePaymentError = (error: string) => {
+    toast.error(error || 'Stripe payment failed');
   };
 
   const steps = [
@@ -244,6 +258,9 @@ export default function CheckoutPage() {
                         ref={paymentFormRef}
                         onSubmit={handlePaymentSubmit}
                         defaultValues={paymentData || undefined}
+                        amount={total}
+                        onStripePaymentSuccess={handleStripePaymentSuccess}
+                        onStripePaymentError={handleStripePaymentError}
                       />
                       <div className="mt-6 flex justify-between">
                         <Button
