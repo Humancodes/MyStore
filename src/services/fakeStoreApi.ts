@@ -21,7 +21,8 @@ const MOCK_PRODUCTS: Product[] = [
     description:
       'Slim-fitting style, contrast raglan long sleeve, three-button henley placket, light weight & soft fabric for breathable and comfortable wearing. And Solid stitched shirts with round neck made for durability and a great fit for casual fashion wear and diehard baseball fans. The Henley style round neckline includes a three-button placket.',
     category: "men's clothing",
-    image: 'https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg',
+    image:
+      'https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg',
     rating: { rate: 4.1, count: 259 },
   },
   {
@@ -107,8 +108,7 @@ const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 11,
-    title:
-      'Silicon Power 256GB SSD 3D NAND A55 Internal SSD - SATA III 6 Gb/s',
+    title: 'Silicon Power 256GB SSD 3D NAND A55 Internal SSD - SATA III 6 Gb/s',
     price: 109,
     description:
       '3D NAND flash are applied to deliver high transfer speeds Remarkable transfer speeds that enable faster bootup and improved overall system performance. The advanced SLC Cache Technology allows performance boost and longer lifespan 7mm slim design suitable for Ultrabooks and Ultra-slim notebooks. Supports TRIM command, Garbage Collection technology, RAID, and ECC (Error Checking & Correction) to provide the optimized performance and enhanced reliability.',
@@ -213,20 +213,89 @@ const MOCK_PRODUCTS: Product[] = [
 
 /**
  * Validate if an image URL is valid
- * Returns true if the URL is a valid HTTP/HTTPS URL
- * Note: We allow placehold.co URLs even without query params as they work with unoptimized images
+ * Returns true if the URL is a valid HTTP/HTTPS URL pointing to an actual image
+ * Filters out redirect URLs, Google Images URLs, and other invalid sources
  */
 function isValidImageUrl(url: string | undefined | null): boolean {
   if (!url || typeof url !== 'string' || url.trim() === '') return false;
-  
+
   // Check if it's a valid HTTP/HTTPS URL
   try {
     const urlObj = new URL(url);
     if (!['http:', 'https:'].includes(urlObj.protocol)) return false;
-    
-    // Allow all valid HTTP/HTTPS URLs
-    // placehold.co URLs work fine with unoptimized images
-    return true;
+
+    // Reject Google Images redirect URLs
+    if (
+      urlObj.hostname === 'www.google.com' ||
+      urlObj.hostname === 'images.google.com'
+    ) {
+      return false;
+    }
+
+    // Reject URLs that are clearly redirects or search results
+    if (
+      url.includes('imgres?') ||
+      url.includes('imgurl=') ||
+      url.includes('imgrefurl=')
+    ) {
+      return false;
+    }
+
+    // Reject URLs that don't look like direct image links
+    const invalidPatterns = [
+      /\/search\?/,
+      /\/imgres\?/,
+      /google\.com/,
+      /googleusercontent\.com\/imgres/,
+    ];
+
+    if (invalidPatterns.some(pattern => pattern.test(url))) {
+      return false;
+    }
+
+    // Check if URL has a valid image extension (optional, but helps)
+    const imageExtensions = [
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.gif',
+      '.webp',
+      '.svg',
+      '.bmp',
+    ];
+    const hasImageExtension = imageExtensions.some(ext =>
+      urlObj.pathname.toLowerCase().endsWith(ext)
+    );
+
+    // Only allow URLs from known image hosts (must match next.config.ts)
+    const allowedImageHosts = [
+      'fakestoreapi.com',
+      'via.placeholder.com',
+      'placehold.co',
+      'images.unsplash.com',
+      'i.imgur.com',
+      'api.escuelajs.co',
+      'placeimg.com',
+      'images.pexels.com',
+      'res.cloudinary.com',
+      'cdn.prod.website-files.com',
+      'cdn-imgix.headout.com',
+      'encrypted-tbn2.gstatic.com',
+    ];
+
+    const isAllowedHost = allowedImageHosts.some(host =>
+      urlObj.hostname.includes(host)
+    );
+
+    if (!isAllowedHost) {
+      return false;
+    }
+
+    // Check for image paths in URL (only for allowed hosts)
+    const hasImagePath =
+      urlObj.pathname.includes('/image/') || urlObj.pathname.includes('/img/');
+
+    return hasImageExtension || hasImagePath;
   } catch {
     return false;
   }
@@ -254,17 +323,21 @@ function transformProduct(product: any, index: number): Product | null {
   // Extract all images from various possible sources
   let images: string[] = [];
   let primaryImage: string | undefined;
-  
+
   // First, try to get images array from API
   if (Array.isArray(product.images) && product.images.length > 0) {
     // Filter and validate all images
     images = product.images.filter((img: string) => isValidImageUrl(img));
     primaryImage = images[0];
   }
-  
+
   // If no valid images from array, try other sources
   if (!primaryImage) {
-    if (typeof product.category === 'object' && product.category.image && isValidImageUrl(product.category.image)) {
+    if (
+      typeof product.category === 'object' &&
+      product.category.image &&
+      isValidImageUrl(product.category.image)
+    ) {
       const categoryImage = product.category.image as string;
       primaryImage = categoryImage;
       images = [categoryImage];
@@ -274,42 +347,100 @@ function transformProduct(product: any, index: number): Product | null {
       images = [productImage];
     }
   }
-  
+
   // If no valid image URL, return null (product will be filtered out)
   if (!primaryImage) {
     return null;
   }
-  
+
   // Extract category name from category object
-  const categoryName = typeof product.category === 'object' ? product.category.name : product.category;
-  
+  const categoryName =
+    typeof product.category === 'object'
+      ? product.category.name
+      : product.category;
+
   // Enhance generic titles like "new 1", "new 2" while keeping proper API titles
   let enhancedTitle = product.title;
-  if (!product.title || /^new\s*\d+$/i.test(product.title.trim()) || product.title.trim().length < 5) {
+  if (
+    !product.title ||
+    /^new\s*\d+$/i.test(product.title.trim()) ||
+    product.title.trim().length < 5
+  ) {
     // Generate a better title from category and description
     const description = product.description || '';
     const category = categoryName || 'Product';
-    
+
     // Category-specific title generators
     const categoryTitles: Record<string, string[]> = {
-      'clothes': ['Classic Cotton T-Shirt', 'Premium Denim Jeans', 'Comfortable Hoodie', 'Stylish Polo Shirt', 'Casual Summer Dress', 'Designer Jacket', 'Elegant Blazer', 'Soft Cotton Sweater'],
-      'electronics': ['Smart Wireless Headphones', 'High-Performance Laptop', 'Portable Power Bank', 'Wireless Mouse', 'USB-C Charging Cable', 'Bluetooth Speaker', 'Smart Watch', 'Tablet Stand'],
-      'furniture': ['Modern Office Chair', 'Comfortable Sofa Set', 'Wooden Dining Table', 'Ergonomic Desk', 'Cozy Bed Frame', 'Storage Cabinet', 'Coffee Table', 'Bookshelf'],
-      'shoes': ['Running Sports Shoes', 'Casual Sneakers', 'Formal Leather Shoes', 'Comfortable Sandals', 'Winter Boots', 'Athletic Trainers', 'Dress Shoes', 'Hiking Boots'],
-      'others': ['Premium Accessory', 'Quality Product', 'Designer Item', 'Luxury Collection', 'Exclusive Edition', 'Limited Edition', 'Special Collection', 'Signature Series'],
+      clothes: [
+        'Classic Cotton T-Shirt',
+        'Premium Denim Jeans',
+        'Comfortable Hoodie',
+        'Stylish Polo Shirt',
+        'Casual Summer Dress',
+        'Designer Jacket',
+        'Elegant Blazer',
+        'Soft Cotton Sweater',
+      ],
+      electronics: [
+        'Smart Wireless Headphones',
+        'High-Performance Laptop',
+        'Portable Power Bank',
+        'Wireless Mouse',
+        'USB-C Charging Cable',
+        'Bluetooth Speaker',
+        'Smart Watch',
+        'Tablet Stand',
+      ],
+      furniture: [
+        'Modern Office Chair',
+        'Comfortable Sofa Set',
+        'Wooden Dining Table',
+        'Ergonomic Desk',
+        'Cozy Bed Frame',
+        'Storage Cabinet',
+        'Coffee Table',
+        'Bookshelf',
+      ],
+      shoes: [
+        'Running Sports Shoes',
+        'Casual Sneakers',
+        'Formal Leather Shoes',
+        'Comfortable Sandals',
+        'Winter Boots',
+        'Athletic Trainers',
+        'Dress Shoes',
+        'Hiking Boots',
+      ],
+      others: [
+        'Premium Accessory',
+        'Quality Product',
+        'Designer Item',
+        'Luxury Collection',
+        'Exclusive Edition',
+        'Limited Edition',
+        'Special Collection',
+        'Signature Series',
+      ],
     };
-    
+
     // Normalize category name for matching
     const normalizedCategory = category.toLowerCase().trim();
-    
+
     // Get category-specific titles or use generic ones
-    const titles = categoryTitles[normalizedCategory] || ['Premium Product', 'Quality Item', 'Designer Collection', 'Exclusive Edition', 'Luxury Item'];
-    
+    const titles = categoryTitles[normalizedCategory] || [
+      'Premium Product',
+      'Quality Item',
+      'Designer Collection',
+      'Exclusive Edition',
+      'Luxury Item',
+    ];
+
     // Use product ID to consistently select a title for the same product
     const titleIndex = product.id % titles.length;
     enhancedTitle = titles[titleIndex];
   }
-  
+
   return {
     id: product.id,
     title: enhancedTitle,
@@ -344,13 +475,19 @@ function buildQueryString(filters: {
   const params = new URLSearchParams();
 
   if (filters.title) params.append('title', filters.title);
-  if (filters.price !== undefined) params.append('price', filters.price.toString());
-  if (filters.price_min !== undefined) params.append('price_min', filters.price_min.toString());
-  if (filters.price_max !== undefined) params.append('price_max', filters.price_max.toString());
-  if (filters.categoryId !== undefined) params.append('categoryId', filters.categoryId.toString());
+  if (filters.price !== undefined)
+    params.append('price', filters.price.toString());
+  if (filters.price_min !== undefined)
+    params.append('price_min', filters.price_min.toString());
+  if (filters.price_max !== undefined)
+    params.append('price_max', filters.price_max.toString());
+  if (filters.categoryId !== undefined)
+    params.append('categoryId', filters.categoryId.toString());
   if (filters.categorySlug) params.append('categorySlug', filters.categorySlug);
-  if (filters.offset !== undefined) params.append('offset', filters.offset.toString());
-  if (filters.limit !== undefined) params.append('limit', filters.limit.toString());
+  if (filters.offset !== undefined)
+    params.append('offset', filters.offset.toString());
+  if (filters.limit !== undefined)
+    params.append('limit', filters.limit.toString());
 
   return params.toString();
 }
@@ -374,7 +511,7 @@ export async function fetchAllProducts(
   try {
     const defaultLimit = filters.limit || 50;
     const defaultOffset = filters.offset || 0;
-    
+
     const queryString = buildQueryString({
       ...filters,
       limit: defaultLimit,
@@ -391,7 +528,7 @@ export async function fetchAllProducts(
     }
 
     const products = await response.json();
-    
+
     // Log API response for debugging (only in development)
     if (process.env.NODE_ENV === 'development' && products.length > 0) {
       console.log('API Response sample:', {
@@ -403,14 +540,19 @@ export async function fetchAllProducts(
         },
       });
     }
-    
+
     // Transform products to match our Product type and filter out products without valid images
     const transformedProducts = products
       .map((product: any, index: number) => transformProduct(product, index))
-      .filter((product: Product | null): product is Product => product !== null);
-    
+      .filter(
+        (product: Product | null): product is Product => product !== null
+      );
+
     // Log transformed products for debugging
-    if (process.env.NODE_ENV === 'development' && transformedProducts.length > 0) {
+    if (
+      process.env.NODE_ENV === 'development' &&
+      transformedProducts.length > 0
+    ) {
       console.log('Transformed products sample:', {
         total: transformedProducts.length,
         firstProduct: {
@@ -420,11 +562,14 @@ export async function fetchAllProducts(
         },
       });
     }
-    
+
     // Shuffle products to make it feel fresh (randomize order)
     return shuffleArray(transformedProducts);
   } catch (error) {
-    console.error('Error fetching products from API, using fallback data:', error);
+    console.error(
+      'Error fetching products from API, using fallback data:',
+      error
+    );
     // Fallback to hardcoded data if API fails
     return MOCK_PRODUCTS;
   }
@@ -450,9 +595,12 @@ export async function fetchProductById(id: number): Promise<Product> {
     }
     return transformed;
   } catch (error) {
-    console.error(`Error fetching product ${id} from API, using fallback:`, error);
+    console.error(
+      `Error fetching product ${id} from API, using fallback:`,
+      error
+    );
     // Fallback to hardcoded data if API fails
-    const product = MOCK_PRODUCTS.find((p) => p.id === id);
+    const product = MOCK_PRODUCTS.find(p => p.id === id);
     if (!product) {
       throw new Error(`Product with id ${id} not found`);
     }
@@ -480,7 +628,7 @@ export async function fetchCategories(): Promise<Category[]> {
     console.error('Error fetching categories from API, using fallback:', error);
     // Fallback to hardcoded data if API fails
     const categoryNames = Array.from(
-      new Set(MOCK_PRODUCTS.map((p) => p.category))
+      new Set(MOCK_PRODUCTS.map(p => p.category))
     );
     // Convert to Category format
     return categoryNames.map((name, index) => ({
@@ -502,10 +650,10 @@ export async function getCategoryByNameOrSlug(
   try {
     const categories = await fetchCategories();
     const normalized = nameOrSlug.toLowerCase();
-    
+
     return (
       categories.find(
-        (cat) =>
+        cat =>
           cat.name.toLowerCase() === normalized ||
           cat.slug.toLowerCase() === normalized
       ) || null
@@ -535,9 +683,12 @@ export async function fetchProductsByCategory(
       const categoryObj = await getCategoryByNameOrSlug(category);
       if (!categoryObj) {
         // Fallback: fetch all and filter by name
-        const response = await fetch(`${API_BASE_URL}/products?offset=0&limit=200`, {
-          next: { revalidate: 3600 },
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/products?offset=0&limit=200`,
+          {
+            next: { revalidate: 3600 },
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`Failed to fetch products: ${response.statusText}`);
@@ -545,37 +696,55 @@ export async function fetchProductsByCategory(
 
         const products = await response.json();
         const transformedProducts = products
-          .map((product: any, index: number) => transformProduct(product, index))
-          .filter((product: Product | null): product is Product => product !== null)
-          .filter((p: Product) => p.category.toLowerCase() === category.toLowerCase());
-        
+          .map((product: any, index: number) =>
+            transformProduct(product, index)
+          )
+          .filter(
+            (product: Product | null): product is Product => product !== null
+          )
+          .filter(
+            (p: Product) => p.category.toLowerCase() === category.toLowerCase()
+          );
+
         return shuffleArray(transformedProducts);
       }
       categoryId = categoryObj.id;
     }
 
     // Use the efficient category products endpoint
-    const response = await fetch(`${API_BASE_URL}/categories/${categoryId}/products`, {
-      next: { revalidate: 3600 },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/categories/${categoryId}/products`,
+      {
+        next: { revalidate: 3600 },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch products by category: ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch products by category: ${response.statusText}`
+      );
     }
 
     const products = await response.json();
     // Transform products to match our Product type and filter out products without valid images
     const transformedProducts = products
-      .map((product: any, index: number) => transformProduct(product, product.id || index))
-      .filter((product: Product | null): product is Product => product !== null);
-    
+      .map((product: any, index: number) =>
+        transformProduct(product, product.id || index)
+      )
+      .filter(
+        (product: Product | null): product is Product => product !== null
+      );
+
     // Shuffle products to make it feel fresh
     return shuffleArray(transformedProducts);
   } catch (error) {
-    console.error(`Error fetching products for category ${category} from API, using fallback:`, error);
+    console.error(
+      `Error fetching products for category ${category} from API, using fallback:`,
+      error
+    );
     // Fallback to hardcoded data if API fails
-    return MOCK_PRODUCTS.filter((p) => 
-      p.category.toLowerCase() === String(category).toLowerCase()
+    return MOCK_PRODUCTS.filter(
+      p => p.category.toLowerCase() === String(category).toLowerCase()
     );
   }
 }

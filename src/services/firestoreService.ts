@@ -238,17 +238,30 @@ export class FirestoreService {
   static async getOrdersBySeller(sellerId: string): Promise<Order[]> {
     try {
       const ordersRef = collection(db, COLLECTIONS.ORDERS);
-      const q = query(ordersRef, orderBy('createdAt', 'desc'));
-      const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(ordersRef);
 
-      const allOrders = querySnapshot.docs.map(
-        doc => ({ id: doc.id, ...doc.data() }) as Order
-      );
+      const allOrders = querySnapshot.docs
+        .map(doc => {
+          try {
+            return { id: doc.id, ...doc.data() } as Order;
+          } catch {
+            return null;
+          }
+        })
+        .filter((order): order is Order => order !== null);
 
-      return allOrders.filter(
+      const sellerOrders = allOrders.filter(
         order =>
           order.items && order.items.some(item => item.sellerId === sellerId)
       );
+
+      return sellerOrders.sort((a, b) => {
+        const aTime =
+          a.createdAt?.toMillis?.() || a.createdAt?.seconds * 1000 || 0;
+        const bTime =
+          b.createdAt?.toMillis?.() || b.createdAt?.seconds * 1000 || 0;
+        return bTime - aTime;
+      });
     } catch (error) {
       console.error('Error in getOrdersBySeller:', error);
       return [];

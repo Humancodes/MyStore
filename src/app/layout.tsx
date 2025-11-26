@@ -7,6 +7,7 @@ import ReduxProvider from '@/providers/ReduxProvider';
 import QueryProvider from '@/providers/QueryProvider';
 import AuthProvider from '@/providers/AuthProvider';
 import FirestoreSyncProvider from '@/providers/FirestoreSyncProvider';
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -41,6 +42,7 @@ export default function RootLayout({
                 <Header />
                 {children}
                 <Footer />
+                <Toaster position="top-right" />
               </FirestoreSyncProvider>
             </AuthProvider>
           </ReduxProvider>

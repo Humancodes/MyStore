@@ -20,9 +20,60 @@ interface ProductCardProps {
   product: Product;
 }
 
+function isValidImageUrl(url: string): boolean {
+  if (!url || typeof url !== 'string') return false;
+  
+  try {
+    const urlObj = new URL(url);
+    if (!['http:', 'https:'].includes(urlObj.protocol)) return false;
+    
+    if (urlObj.hostname === 'www.google.com' || urlObj.hostname === 'images.google.com') {
+      return false;
+    }
+    
+    if (url.includes('imgres?') || url.includes('imgurl=') || url.includes('imgrefurl=')) {
+      return false;
+    }
+    
+    const allowedImageHosts = [
+      'fakestoreapi.com',
+      'via.placeholder.com',
+      'placehold.co',
+      'images.unsplash.com',
+      'i.imgur.com',
+      'api.escuelajs.co',
+      'placeimg.com',
+      'images.pexels.com',
+      'res.cloudinary.com',
+      'cdn.prod.website-files.com',
+      'cdn-imgix.headout.com',
+      'encrypted-tbn2.gstatic.com',
+    ];
+    
+    const isAllowedHost = allowedImageHosts.some(host => 
+      urlObj.hostname.includes(host)
+    );
+    
+    if (!isAllowedHost) {
+      return false;
+    }
+    
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp'];
+    const hasImageExtension = imageExtensions.some(ext => 
+      urlObj.pathname.toLowerCase().endsWith(ext)
+    );
+    
+    return hasImageExtension || urlObj.pathname.includes('/image/') || urlObj.pathname.includes('/img/');
+  } catch {
+    return false;
+  }
+}
+
 export default function ProductCard({ product }: ProductCardProps) {
   const [imgError, setImgError] = useState(false);
   const placeholder = `https://via.placeholder.com/400x400/e5e7eb/6b7280?text=${encodeURIComponent(product.title.slice(0, 15))}`;
+  
+  const imageSrc = isValidImageUrl(product.image) && !imgError ? product.image : placeholder;
 
   return (
     <Link href={`/products/${product.id}`} className="cursor-pointer">
@@ -30,13 +81,13 @@ export default function ProductCard({ product }: ProductCardProps) {
         <CardHeader className="p-0">
           <div className="relative w-full aspect-square overflow-hidden rounded-t-lg bg-gray-100">
             <Image
-              src={imgError ? placeholder : product.image}
+              src={imageSrc}
               alt={product.title}
               fill
               className="object-contain group-hover:scale-105 transition-transform duration-300 p-2"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               onError={() => setImgError(true)}
-              unoptimized={imgError}
+              unoptimized={imageSrc === placeholder}
             />
             {/* Wishlist Button - Top Right */}
             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">

@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Star, Zap, CheckCircle2, Truck, Shield } from 'lucide-react';
 import type { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { addToCart } from '@/store/slices/cartSlice';
 import AddToCartButton from '@/components/cart/AddToCartButton';
 
 interface ProductInfoProps {
@@ -11,6 +14,9 @@ interface ProductInfoProps {
 }
 
 export default function ProductInfo({ product }: ProductInfoProps) {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
   const [quantity, setQuantity] = useState(1);
   const [selectedOption, setSelectedOption] = useState<'buy' | 'exchange'>('buy');
 
@@ -19,9 +25,12 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const discount = ((originalPrice - product.price) / originalPrice) * 100;
 
   const handleBuyNow = () => {
-    // TODO: Implement buy now functionality
-    // For now, just add to cart and redirect to checkout
-    console.log('Buy now:', product.id, quantity);
+    dispatch(addToCart({ product, quantity }));
+    if (user) {
+      router.push('/checkout');
+    } else {
+      router.push('/login?redirect=/checkout');
+    }
   };
 
   const handleQuantityChange = (delta: number) => {
