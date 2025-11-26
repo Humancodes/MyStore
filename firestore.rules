@@ -72,11 +72,11 @@ service cloud.firestore {
     match /orders/{orderId} {
       allow read: if isAuthenticated() && (
         isOwner(resource.data.buyerId) ||
-        isSeller() && resource.data.items[0].sellerId == request.auth.uid ||
+        isSeller() ||
         isAdmin()
       );
       allow create: if isBuyer() && isOwner(request.resource.data.buyerId);
-      allow update: if isSeller() && resource.data.items[0].sellerId == request.auth.uid ||
+      allow update: if isSeller() ||
                      isAdmin() ||
                      isBuyer() && isOwner(resource.data.buyerId) && 
                      request.resource.data.orderStatus == 'cancelled' &&
