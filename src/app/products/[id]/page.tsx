@@ -10,6 +10,7 @@ import ProductHighlights from '@/components/product/ProductHighlights';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import ProductDescription from '@/components/product/ProductDescription';
 import SimilarProducts from '@/components/product/SimilarProducts';
+import ProductReviews from '@/components/reviews/ProductReviews';
 import type { Product } from '@/types/product';
 
 export async function generateMetadata({
@@ -103,6 +104,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Product Description Section */}
         <div className="mt-8">
           <ProductDescription product={product} />
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-12">
+          <ProductReviews
+            productId={String(product.id)}
+            productTitle={product.title}
+          />
         </div>
 
         {/* Similar Products Section */}
