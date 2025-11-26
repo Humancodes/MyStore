@@ -130,15 +130,15 @@ export default function ReviewsList({ productId }: ReviewsListProps) {
                 const count = ratingDistribution[rating];
                 const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
                 return (
-                  <button
+                  <div
                     key={rating}
                     onClick={() =>
                       setFilterRating(filterRating === rating ? 'all' : rating)
                     }
-                    className="flex items-center gap-2 w-full text-left hover:bg-gray-50 p-2 rounded transition-colors"
+                    className="flex items-center gap-2 w-full text-left hover:bg-gray-50 p-2 rounded transition-colors cursor-pointer"
                   >
                     <span className="text-sm font-medium w-8">{rating}</span>
-                    <StarRating rating={1} size="sm" />
+                    <StarRating rating={1} size="sm" readOnly={true} />
                     <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-yellow-400 transition-all"
@@ -148,7 +148,7 @@ export default function ReviewsList({ productId }: ReviewsListProps) {
                     <span className="text-sm text-gray-600 w-12 text-right">
                       {count}
                     </span>
-                  </button>
+                  </div>
                 );
               })}
             </div>

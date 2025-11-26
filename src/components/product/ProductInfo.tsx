@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addToCart } from '@/store/slices/cartSlice';
 import AddToCartButton from '@/components/cart/AddToCartButton';
+import { useReviews, calculateAverageRating } from '@/hooks/useReviews';
 
 interface ProductInfoProps {
   product: Product;
@@ -19,6 +20,10 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const user = useAppSelector((state) => state.auth.user);
   const [quantity, setQuantity] = useState(1);
   const [selectedOption, setSelectedOption] = useState<'buy' | 'exchange'>('buy');
+
+  const { data: reviews = [] } = useReviews(String(product.id));
+  const averageRating = reviews.length > 0 ? calculateAverageRating(reviews) : product.rating.rate;
+  const reviewCount = reviews.length > 0 ? reviews.length : product.rating.count;
 
   // Calculate discount (mock - 20% off)
   const originalPrice = product.price * 1.2;
@@ -50,11 +55,11 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded">
-            <span className="text-lg font-semibold">{product.rating.rate.toFixed(1)}</span>
+            <span className="text-lg font-semibold">{averageRating.toFixed(1)}</span>
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
           </div>
           <span className="text-sm text-gray-600">
-            ({product.rating.count.toLocaleString()} Ratings & Reviews)
+            ({reviewCount.toLocaleString()} {reviewCount === 1 ? 'Rating' : 'Ratings'} & {reviewCount === 1 ? 'Review' : 'Reviews'})
           </span>
         </div>
         <div className="flex items-center gap-1 text-primary">

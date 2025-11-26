@@ -10,6 +10,7 @@ interface StarRatingProps {
   interactive?: boolean;
   onRatingChange?: (rating: number) => void;
   className?: string;
+  readOnly?: boolean;
 }
 
 export default function StarRating({
@@ -19,6 +20,7 @@ export default function StarRating({
   interactive = false,
   onRatingChange,
   className,
+  readOnly = false,
 }: StarRatingProps) {
   const sizeClasses = {
     sm: 'h-3 w-3',
@@ -45,30 +47,43 @@ export default function StarRating({
         const isFilled = starValue <= Math.round(rating);
         const isHalfFilled = starValue - 0.5 <= rating && rating < starValue;
 
+        const StarIcon = (
+          <Star
+            className={cn(
+              sizeClasses[size],
+              isFilled
+                ? 'fill-yellow-400 text-yellow-400'
+                : isHalfFilled
+                ? 'fill-yellow-200 text-yellow-400'
+                : 'fill-gray-200 text-gray-300'
+            )}
+          />
+        );
+
+        if (readOnly || !interactive) {
+          return (
+            <span
+              key={index}
+              className="transition-colors"
+              aria-label={`${starValue} star${starValue === 1 ? '' : 's'}`}
+            >
+              {StarIcon}
+            </span>
+          );
+        }
+
         return (
           <button
             key={index}
             type="button"
             onClick={() => handleClick(starValue)}
             onMouseEnter={() => handleMouseEnter(starValue)}
-            disabled={!interactive}
             className={cn(
-              'transition-colors',
-              interactive && 'cursor-pointer hover:scale-110',
-              !interactive && 'cursor-default'
+              'transition-colors cursor-pointer hover:scale-110'
             )}
             aria-label={`${starValue} star${starValue === 1 ? '' : 's'}`}
           >
-            <Star
-              className={cn(
-                sizeClasses[size],
-                isFilled
-                  ? 'fill-yellow-400 text-yellow-400'
-                  : isHalfFilled
-                  ? 'fill-yellow-200 text-yellow-400'
-                  : 'fill-gray-200 text-gray-300'
-              )}
-            />
+            {StarIcon}
           </button>
         );
       })}
