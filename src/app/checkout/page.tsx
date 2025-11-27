@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { CheckCircle2, Package, CreditCard, FileCheck } from 'lucide-react';
 import { FirestoreService } from '@/services/firestoreService';
 import type { ShippingAddress, OrderItem } from '@/types/firestore';
-import { toast } from 'sonner';
+import { useNotification, notificationMessages } from '@/hooks/useNotification';
 import PaymentProcessing from '@/components/checkout/PaymentProcessing';
 
 type CheckoutStep = 'shipping' | 'payment' | 'review' | 'processing';
@@ -22,6 +22,7 @@ type CheckoutStep = 'shipping' | 'payment' | 'review' | 'processing';
 export default function CheckoutPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const notify = useNotification();
   const { items, totalPrice, totalItems } = useAppSelector((state) => state.cart);
   const user = useAppSelector((state) => state.auth.user);
 
@@ -106,13 +107,18 @@ export default function CheckoutPage() {
 
       dispatch(clearCart());
       
-      toast.success('Order placed successfully!');
+      notify.success(notificationMessages.order.placed, {
+        action: {
+          label: 'View Order',
+          onClick: () => router.push(`/buyer/dashboard/orders?orderId=${orderId}`),
+        },
+      });
       setTimeout(() => {
         router.push(`/buyer/dashboard/orders?orderId=${orderId}`);
       }, 500);
     } catch (error) {
       console.error('Error placing order:', error);
-      toast.error('Failed to place order. Please try again.');
+      notify.error(notificationMessages.order.failed);
       setCurrentStep('review');
       setOrderPlaced(false);
     } finally {
@@ -123,7 +129,7 @@ export default function CheckoutPage() {
   const handlePaymentError = (error: string) => {
     setShowPaymentProcessing(false);
     setCurrentStep('review');
-    toast.error(error || 'Payment failed. Please try again.');
+    notify.error(error || notificationMessages.payment.failed);
   };
 
   const handleStripePaymentSuccess = (paymentIntentId: string) => {
@@ -136,7 +142,7 @@ export default function CheckoutPage() {
   };
 
   const handleStripePaymentError = (error: string) => {
-    toast.error(error || 'Stripe payment failed');
+    notify.error(error || notificationMessages.payment.failed);
   };
 
   const steps = [

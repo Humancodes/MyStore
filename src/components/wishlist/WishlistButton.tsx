@@ -4,6 +4,7 @@ import { Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addToWishlist, removeFromWishlist } from '@/store/slices/wishlistSlice';
+import { useNotification, notificationMessages } from '@/hooks/useNotification';
 import type { Product } from '@/types/product';
 
 interface WishlistButtonProps {
@@ -22,6 +23,7 @@ export default function WishlistButton({
   showText = false,
 }: WishlistButtonProps) {
   const dispatch = useAppDispatch();
+  const notify = useNotification();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
   const isInWishlist = wishlistItems.some((item) => item.id === product.id);
 
@@ -29,10 +31,21 @@ export default function WishlistButton({
     e.preventDefault();
     e.stopPropagation();
 
-    if (isInWishlist) {
-      dispatch(removeFromWishlist(product.id));
-    } else {
-      dispatch(addToWishlist(product));
+    try {
+      if (isInWishlist) {
+        dispatch(removeFromWishlist(product.id));
+        notify.success(notificationMessages.wishlist.removed(product.title));
+      } else {
+        dispatch(addToWishlist(product));
+        notify.success(notificationMessages.wishlist.added(product.title), {
+          action: {
+            label: 'View Wishlist',
+            onClick: () => window.location.href = '/wishlist',
+          },
+        });
+      }
+    } catch (error) {
+      notify.error(notificationMessages.wishlist.error);
     }
   };
 

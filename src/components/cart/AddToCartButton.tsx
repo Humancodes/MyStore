@@ -4,6 +4,7 @@ import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addToCart } from '@/store/slices/cartSlice';
+import { useNotification, notificationMessages } from '@/hooks/useNotification';
 import type { Product } from '@/types/product';
 
 interface AddToCartButtonProps {
@@ -24,6 +25,7 @@ export default function AddToCartButton({
   showIcon = true,
 }: AddToCartButtonProps) {
   const dispatch = useAppDispatch();
+  const notify = useNotification();
   
   const cartItems = useAppSelector((state) => state.cart.items);
   
@@ -34,8 +36,22 @@ export default function AddToCartButton({
     e.preventDefault();
     e.stopPropagation();
     
-    dispatch(addToCart({ product, quantity }));
-    console.log(`Added ${quantity} ${product.title} to cart!`);
+    try {
+      dispatch(addToCart({ product, quantity }));
+      
+      if (isInCart) {
+        notify.success(notificationMessages.cart.updated(product.title));
+      } else {
+        notify.success(notificationMessages.cart.added(product.title), {
+          action: {
+            label: 'View Cart',
+            onClick: () => window.location.href = '/cart',
+          },
+        });
+      }
+    } catch (error) {
+      notify.error(notificationMessages.cart.error);
+    }
   };
   
   return (

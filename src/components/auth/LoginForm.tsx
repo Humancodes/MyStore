@@ -8,6 +8,7 @@ import * as z from 'zod';
 import { signIn } from '@/services/authService';
 import { useAppDispatch } from '@/store/hooks';
 import { setError, clearError } from '@/store/slices/authSlice';
+import { useNotification, notificationMessages } from '@/hooks/useNotification';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,6 +32,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginForm() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const notify = useNotification();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -47,10 +49,13 @@ export default function LoginForm() {
 
     try {
       await signIn(data.email, data.password);
+      notify.success(notificationMessages.auth.loginSuccess);
       router.push('/');
       router.refresh();
     } catch (error: any) {
-      dispatch(setError(error.message));
+      const errorMessage = error.message || notificationMessages.auth.loginError;
+      dispatch(setError(errorMessage));
+      notify.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

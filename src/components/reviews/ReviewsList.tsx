@@ -10,7 +10,7 @@ import StarRating from './StarRating';
 import { useReviews, calculateAverageRating, getRatingDistribution } from '@/hooks/useReviews';
 import { useAppSelector } from '@/store/hooks';
 import { FirestoreService } from '@/services/firestoreService';
-import { toast } from 'sonner';
+import { useNotification, notificationMessages } from '@/hooks/useNotification';
 import { ThumbsUp, MessageSquare, CheckCircle2, Loader2 } from 'lucide-react';
 import type { Review } from '@/types/firestore';
 import { formatDistanceToNow } from 'date-fns';
@@ -23,6 +23,7 @@ type SortOption = 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-helpful';
 
 export default function ReviewsList({ productId }: ReviewsListProps) {
   const user = useAppSelector((state) => state.auth.user);
+  const notify = useNotification();
   const { data: reviews = [], isLoading, refetch } = useReviews(productId);
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [filterRating, setFilterRating] = useState<number | 'all'>('all');
@@ -56,7 +57,7 @@ export default function ReviewsList({ productId }: ReviewsListProps) {
 
   const handleHelpful = async (reviewId: string) => {
     if (!user) {
-      toast.error('Please login to mark reviews as helpful');
+      notify.error(notificationMessages.review.loginRequired);
       return;
     }
 
@@ -67,11 +68,11 @@ export default function ReviewsList({ productId }: ReviewsListProps) {
           helpfulCount: review.helpfulCount + 1,
         });
         refetch();
-        toast.success('Thank you for your feedback!');
+        notify.success('Thank you for your feedback!');
       }
     } catch (error) {
       console.error('Error marking review as helpful:', error);
-      toast.error('Failed to update review');
+      notify.error('Failed to update review');
     }
   };
 

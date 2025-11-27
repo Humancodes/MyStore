@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import StarRating from './StarRating';
 import { useAppSelector } from '@/store/hooks';
 import { FirestoreService } from '@/services/firestoreService';
-import { toast } from 'sonner';
+import { useNotification, notificationMessages } from '@/hooks/useNotification';
 import { Loader2 } from 'lucide-react';
 
 const reviewSchema = z.object({
@@ -35,6 +35,7 @@ export default function ReviewForm({
   onReviewSubmitted,
 }: ReviewFormProps) {
   const user = useAppSelector((state) => state.auth.user);
+  const notify = useNotification();
   const [rating, setRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -54,13 +55,13 @@ export default function ReviewForm({
 
   const onSubmit = async (data: ReviewFormData) => {
     if (!user) {
-      toast.error('Please login to submit a review');
+      notify.error(notificationMessages.review.loginRequired);
       return;
     }
 
     const finalRating = rating || data.rating;
     if (finalRating === 0) {
-      toast.error('Please select a rating');
+      notify.error('Please select a rating');
       return;
     }
 
@@ -78,13 +79,13 @@ export default function ReviewForm({
         verifiedPurchase: false,
       });
 
-      toast.success('Review submitted successfully!');
+      notify.success(notificationMessages.review.submitted);
       form.reset();
       setRating(0);
       onReviewSubmitted?.();
     } catch (error: any) {
       console.error('Error submitting review:', error);
-      toast.error(error.message || 'Failed to submit review. Please try again.');
+      notify.error(error.message || notificationMessages.review.error);
     } finally {
       setIsSubmitting(false);
     }

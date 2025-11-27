@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { logout as logoutAction } from '@/store/slices/authSlice';
 import { logout } from '@/services/authService';
 import { useRole } from '@/hooks/useRole';
+import { useNotification, notificationMessages } from '@/hooks/useNotification';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 export default function UserMenu() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const notify = useNotification();
   const user = useAppSelector((state) => state.auth.user);
   const { isSeller, isAdmin } = useRole();
 
@@ -27,9 +29,11 @@ export default function UserMenu() {
     try {
       await logout();
       dispatch(logoutAction());
+      notify.success(notificationMessages.auth.logoutSuccess);
       router.push('/');
     } catch (error) {
       console.error('Logout error:', error);
+      notify.error(notificationMessages.auth.logoutError);
     }
   };
 

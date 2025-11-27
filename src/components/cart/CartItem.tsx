@@ -5,6 +5,7 @@ import { X, Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppDispatch } from '@/store/hooks';
 import { removeFromCart, updateQuantity } from '@/store/slices/cartSlice';
+import { useNotification, notificationMessages } from '@/hooks/useNotification';
 import type { Product } from '@/types/product';
 
 interface CartItemProps {
@@ -13,16 +14,34 @@ interface CartItemProps {
 
 export default function CartItem({ item }: CartItemProps) {
   const dispatch = useAppDispatch();
+  const notify = useNotification();
   
   const handleRemove = () => {
-    dispatch(removeFromCart(item.id));
+    try {
+      dispatch(removeFromCart(item.id));
+      notify.success(notificationMessages.cart.removed(item.title), {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            dispatch(updateQuantity({ id: item.id, quantity: item.quantity }));
+          },
+        },
+      });
+    } catch (error) {
+      notify.error(notificationMessages.cart.error);
+    }
   };
   
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity < 1) {
       handleRemove();
-    } else {    
-      dispatch(updateQuantity({ id: item.id, quantity: newQuantity }));
+    } else {
+      try {
+        dispatch(updateQuantity({ id: item.id, quantity: newQuantity }));
+        notify.success(notificationMessages.cart.updated(item.title));
+      } catch (error) {
+        notify.error(notificationMessages.cart.error);
+      }
     }
   };
   
