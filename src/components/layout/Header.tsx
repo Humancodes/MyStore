@@ -3,26 +3,27 @@
 import Link from 'next/link';
 import { Search, User, Store, Menu, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { useAppSelector } from '@/store/hooks';
 import CartIcon from '@/components/cart/CartIcon';
 import UserMenu from '@/components/layout/UserMenu';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import SearchBar from '@/components/search/SearchBar';
+import { useState } from 'react';
 
 export default function Header() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
   const wishlistCount = wishlistItems.length;
   const user = useAppSelector((state) => state.auth.user);
   const authLoading = useAppSelector((state) => state.auth.loading);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
-    }
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white dark:bg-gray-900 shadow-sm">
@@ -38,25 +39,9 @@ export default function Header() {
           </Link>
 
           {/* Search Bar */}
-          <form
-            onSubmit={handleSearch}
-            className="relative hidden flex-1 max-w-2xl sm:flex"
-          >
-            <Input
-              type="text"
-              placeholder="Search for Products, Brands and More"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-full rounded-l-md border-r-0 pr-10"
-            />
-            <Button
-              type="submit"
-              size="icon"
-              className="absolute right-0 h-10 rounded-l-none rounded-r-md"
-            >
-              <Search className="h-5 w-5" />
-            </Button>
-          </form>
+          <div className="hidden sm:flex">
+            <SearchBar className="flex-1 max-w-2xl" />
+          </div>
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
@@ -64,9 +49,26 @@ export default function Header() {
             <ThemeToggle />
 
             {/* Mobile Search */}
-            <Button variant="ghost" size="icon" className="sm:hidden">
-              <Search className="h-5 w-5" />
-            </Button>
+            <Sheet open={mobileSearchOpen} onOpenChange={setMobileSearchOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="sm:hidden">
+                  <Search className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="top" className="h-auto">
+                <SheetHeader>
+                  <SheetTitle>Search Products</SheetTitle>
+                  <SheetDescription>
+                    Find products by name, brand, or category
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="mt-4">
+                  <SearchBar
+                    onSearch={() => setMobileSearchOpen(false)}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
 
             {/* Login / User Menu */}
             {!authLoading && (

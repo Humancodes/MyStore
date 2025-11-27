@@ -15,9 +15,11 @@ import { Star } from 'lucide-react';
 import { useState } from 'react';
 import WishlistButton from '@/components/wishlist/WishlistButton';
 import AddToCartButton from '@/components/cart/AddToCartButton';
+import { highlightText } from '@/utils/highlightText';
 
 interface ProductCardProps {
   product: Product;
+  highlightQuery?: string; // Optional search query to highlight in title
 }
 
 function isValidImageUrl(url: string): boolean {
@@ -69,7 +71,7 @@ function isValidImageUrl(url: string): boolean {
   }
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, highlightQuery }: ProductCardProps) {
   const [imgError, setImgError] = useState(false);
   const placeholder = `https://via.placeholder.com/400x400/e5e7eb/6b7280?text=${encodeURIComponent(product.title.slice(0, 15))}`;
   
@@ -101,8 +103,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col p-4">
-          <CardTitle className="text-lg line-clamp-2 mb-2 text-gray-900">
-            {product.title}
+          <CardTitle className="text-lg line-clamp-2 mb-2 text-gray-900 dark:text-gray-100">
+            {highlightQuery ? (
+              highlightText(product.title, highlightQuery)
+            ) : (
+              product.title
+            )}
           </CardTitle>
           <CardDescription className="line-clamp-2 mb-4 flex-1 text-gray-600">
             {product.description}
