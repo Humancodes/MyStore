@@ -123,49 +123,49 @@ export default function Header() {
       </div>
 
       {/* Category Navigation Bar */}
-      <div className="border-t bg-white">
+      <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <nav className="flex items-center gap-4 overflow-x-auto py-2 scrollbar-hide">
             <Link
               href="/products"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors cursor-pointer"
             >
               <span>🛍️</span>
               <span>All Products</span>
             </Link>
             <Link
               href="/products?categorySlug=clothes"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors cursor-pointer"
             >
               <span>👔</span>
               <span>Clothes</span>
             </Link>
             <Link
               href="/products?categorySlug=electronics"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors cursor-pointer"
             >
               <span>📱</span>
               <span>Electronics</span>
             </Link>
             <Link
               href="/products?categorySlug=furniture"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors cursor-pointer"
             >
               <span>🏠</span>
               <span>Furniture</span>
             </Link>
             <Link
               href="/products?categorySlug=shoes"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors cursor-pointer"
             >
-              <span>👟</span>
+              <span className="text-lg">👟</span>
               <span>Shoes</span>
             </Link>
             <Link
               href="/products?categorySlug=others"
-              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary cursor-pointer"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors cursor-pointer"
             >
-              <span>💎</span>
+              <span className="text-lg">💎</span>
               <span>Others</span>
             </Link>
           </nav>

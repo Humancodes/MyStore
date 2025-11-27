@@ -47,7 +47,9 @@ export default function QueryProvider({
             refetchOnReconnect: true,
 
             // Don't refetch on mount if data is fresh
-            refetchOnMount: true,
+            // Set to false to use cached data immediately
+            // Individual queries can override this
+            refetchOnMount: false,
 
             // Retry failed requests once
             retry: 1,

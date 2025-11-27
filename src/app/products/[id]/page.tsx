@@ -1,17 +1,6 @@
-import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import {
-  fetchProductByIdFromFirestore,
-  fetchAllProductsFromFirestore,
-} from '@/services/productService';
-import ProductImageGallery from '@/components/product/ProductImageGallery';
-import ProductInfo from '@/components/product/ProductInfo';
-import ProductHighlights from '@/components/product/ProductHighlights';
-import Breadcrumb from '@/components/ui/Breadcrumb';
-import ProductDescription from '@/components/product/ProductDescription';
-import SimilarProducts from '@/components/product/SimilarProducts';
-import ProductReviews from '@/components/reviews/ProductReviews';
-import type { Product } from '@/types/product';
+import { fetchProductByIdFromFirestore } from '@/services/productService';
+import ProductPageClient from '@/components/products/ProductPageClient';
 
 export async function generateMetadata({
   params,
@@ -54,74 +43,8 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
-
   const productId = isNaN(Number(id)) ? id : Number(id);
-  const product = await fetchProductByIdFromFirestore(productId);
 
-  if (!product) {
-    notFound();
-  }
-
-  // Fetch similar products (same category, excluding current product)
-  const allProducts = await fetchAllProductsFromFirestore({
-    category: product.category,
-  });
-  const similarProducts = allProducts
-    .filter((p) => p.id !== product.id)
-    .slice(0, 8);
-
-  const breadcrumbItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Products', href: '/products' },
-    { label: product.category, href: `/products?categorySlug=${product.category.toLowerCase().replace(/\s+/g, '-')}` },
-    { label: product.title, href: `#` },
-  ];
-
-  return (
-    <div className="min-h-screen bg-muted">
-      <div className="container mx-auto px-4 py-6">
-        {/* Breadcrumb */}
-        <Breadcrumb items={breadcrumbItems} />
-
-        {/* Main Product Section */}
-        <div className="mt-6 grid gap-6 lg:grid-cols-12">
-          {/* Left Column - Image Gallery */}
-          <div className="lg:col-span-5">
-            <ProductImageGallery product={product} />
-          </div>
-
-          {/* Center Column - Product Info */}
-          <div className="lg:col-span-4">
-            <ProductInfo product={product} />
-          </div>
-
-          {/* Right Column - Highlights & Additional Info */}
-          <div className="lg:col-span-3">
-            <ProductHighlights product={product} />
-          </div>
-        </div>
-
-        {/* Product Description Section */}
-        <div className="mt-8">
-          <ProductDescription product={product} />
-        </div>
-
-        {/* Reviews Section */}
-        <div className="mt-12">
-          <ProductReviews
-            productId={String(product.id)}
-            productTitle={product.title}
-          />
-        </div>
-
-        {/* Similar Products Section */}
-        {similarProducts.length > 0 && (
-          <div className="mt-12">
-            <SimilarProducts products={similarProducts} />
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return <ProductPageClient productId={productId} />;
 }
 

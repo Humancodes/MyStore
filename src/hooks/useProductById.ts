@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { fetchProductById } from '@/services/fakeStoreApi';
+import { fetchProductByIdFromFirestore } from '@/services/productService';
 import type { Product } from '@/types/product';
 
 /**
@@ -13,24 +13,26 @@ import type { Product } from '@/types/product';
  *
  * Usage:
  * ```tsx
- * const { data: product, isLoading, error } = useProductById(123);
+ * const { data: product, isLoading, error } = useProductById('product-id');
  * ```
  */
-export function useProductById(id: number): UseQueryResult<Product, Error> {
+export function useProductById(
+  id: string | number
+): UseQueryResult<Product | null, Error> {
   return useQuery({
     // Query Key: ['product', id]
     // Each product ID has its own cache entry
     queryKey: ['product', id],
 
-    // Query Function: Fetches single product
-    queryFn: () => fetchProductById(id),
+    // Query Function: Fetches single product from Firestore
+    queryFn: () => fetchProductByIdFromFirestore(id),
 
-    // Product details might change, so keep it fresh
-    // But still cache for 5 minutes (from default)
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    // Product details stay fresh for 10 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache longer
+    refetchOnMount: false, // Don't refetch if cached data exists - instant loading
 
     // Only fetch if ID is valid
-    enabled: !!id && id > 0,
+    enabled: !!id && (typeof id === 'string' ? id.length > 0 : id > 0),
   });
 }
-

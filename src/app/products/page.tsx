@@ -1,73 +1,93 @@
-import {
-  fetchAllProductsFromFirestore,
-  getCategoriesFromProducts,
-} from '@/services/productService';
+'use client';
+
+import { useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useProducts } from '@/hooks/useProducts';
 import ProductsPageClient from '@/components/products/ProductsPageClient';
+import { Loader2 } from 'lucide-react';
 
-export const metadata = {
-  title: 'Products | MyStore',
-  description: 'Browse our wide selection of products',
-};
-
-interface ProductsPageProps {
-  searchParams: Promise<{
-    title?: string;
-    price?: string;
-    price_min?: string;
-    price_max?: string;
-    categoryId?: string;
-    categorySlug?: string;
-    offset?: string;
-    limit?: string;
-  }>;
-}
-
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  // Await searchParams (Next.js 15 requirement)
-  const params = await searchParams;
+export default function ProductsPage() {
+  const searchParams = useSearchParams();
   
-  // Build filters from search params
-  const firestoreFilters: {
-    title?: string;
-    price_min?: number;
-    price_max?: number;
-    category?: string;
-  } = {};
+  // Build filters from URL params - useMemo to stabilize query key
+  const filters = useMemo(() => {
+    const filterObj: {
+      title?: string;
+      price_min?: number;
+      price_max?: number;
+      categorySlug?: string;
+    } = {};
 
-  if (params.title) firestoreFilters.title = params.title;
-  if (params.price_min) firestoreFilters.price_min = parseFloat(params.price_min);
-  if (params.price_max) firestoreFilters.price_max = parseFloat(params.price_max);
-  if (params.categorySlug) {
-    firestoreFilters.category = params.categorySlug
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    const title = searchParams.get('title');
+    const priceMin = searchParams.get('price_min');
+    const priceMax = searchParams.get('price_max');
+    const categorySlug = searchParams.get('categorySlug');
+
+    if (title) filterObj.title = title;
+    if (priceMin) filterObj.price_min = parseFloat(priceMin);
+    if (priceMax) filterObj.price_max = parseFloat(priceMax);
+    if (categorySlug) filterObj.categorySlug = categorySlug;
+
+    return filterObj;
+  }, [searchParams]);
+
+  // Use React Query for caching
+  // Always show cached data if it exists, even if refetching
+  const { data, isLoading, error, isFetching } = useProducts(filters);
+  
+  // Use cached data immediately if available, otherwise empty array
+  const products = data ?? [];
+  
+  // Get categories
+  const categories: Array<{ id: number; name: string; slug: string; image: string }> = [];
+  const uniqueCategories = Array.from(new Set(products.map(p => p.category)));
+  uniqueCategories.forEach((cat, index) => {
+    categories.push({
+      id: index + 1,
+      name: cat,
+      slug: cat.toLowerCase().replace(/\s+/g, '-'),
+      image: `https://placehold.co/600x400?text=${encodeURIComponent(cat)}`,
+    });
+  });
+
+  const categoryName = filters.categorySlug
+    ? filters.categorySlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+    : 'All Products';
+
+  if (isLoading && data === undefined) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
   }
 
-  // Fetch products from Firestore
-  const products = await fetchAllProductsFromFirestore(firestoreFilters);
-  const categories = await getCategoriesFromProducts();
-
-  // Get category name for display
-  let categoryName = 'All Products';
-  if (firestoreFilters.category) {
-    categoryName = firestoreFilters.category;
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <p className="text-red-500">Error loading products: {error.message}</p>
+        </div>
+      </div>
+    );
   }
-
-  // Convert filters for client component
-  const filters = {
-    title: params.title,
-    price_min: params.price_min ? parseFloat(params.price_min) : undefined,
-    price_max: params.price_max ? parseFloat(params.price_max) : undefined,
-    categorySlug: params.categorySlug,
-  };
 
   return (
-    <ProductsPageClient
-      products={products}
-      categories={categories}
-      categoryName={categoryName}
-      filters={filters}
-    />
+    <>
+      {/* Optional: Show subtle indicator if refetching in background */}
+      {isFetching && data && data.length > 0 && (
+        <div className="fixed top-20 right-4 z-50 bg-primary/90 text-white px-3 py-1 rounded-full text-xs shadow-lg animate-pulse">
+          Updating...
+        </div>
+      )}
+      <ProductsPageClient
+        products={products}
+        categories={categories}
+        categoryName={categoryName}
+        filters={filters}
+      />
+    </>
   );
 }

@@ -78,7 +78,7 @@ export default function SearchBar({
       onSubmit={handleSubmit}
       className={`relative flex-1 max-w-2xl ${className}`}
     >
-      <div className="relative">
+      <div className="relative flex items-center">
         <Input
           ref={inputRef}
           type="text"
@@ -86,12 +86,12 @@ export default function SearchBar({
           value={query}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
-          className="h-10 w-full rounded-l-md border-r-0 pr-10"
+          className="h-10 w-full rounded-l-md rounded-r-none border-2 border-primary focus-visible:border-primary focus-visible:ring-0 pr-10"
         />
         <Button
           type="submit"
           size="icon"
-          className="absolute right-0 h-10 rounded-l-none rounded-r-md"
+          className="h-10 w-12 rounded-l-none rounded-r-md bg-primary hover:bg-primary/90 text-white border-2 border-l-0 border-primary shrink-0"
         >
           <Search className="h-5 w-5" />
         </Button>

@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { fetchAllProducts } from '@/services/fakeStoreApi';
+import { fetchAllProductsFromFirestore } from '@/services/productService';
 import type { Product, ProductFilters } from '@/types/product';
 
 /**
@@ -23,19 +23,37 @@ import type { Product, ProductFilters } from '@/types/product';
 export function useProducts(
   filters: ProductFilters = {}
 ): UseQueryResult<Product[], Error> {
+  // Convert ProductFilters to Firestore filters
+  const firestoreFilters: {
+    title?: string;
+    price_min?: number;
+    price_max?: number;
+    category?: string;
+    status?: 'active' | 'inactive' | 'out_of_stock';
+  } = {};
+
+  if (filters.title) firestoreFilters.title = filters.title;
+  if (filters.price_min !== undefined)
+    firestoreFilters.price_min = filters.price_min;
+  if (filters.price_max !== undefined)
+    firestoreFilters.price_max = filters.price_max;
+  if (filters.categorySlug) {
+    firestoreFilters.category = filters.categorySlug
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
   return useQuery({
-    // Query Key: Unique identifier for this query
-    // Changing filters creates a new cache entry
-    // Example: ['products', { categorySlug: 'electronics' }]
-    queryKey: ['products', filters],
-
-    // Query Function: Fetches the data
-    // React Query calls this function and caches the result
-    queryFn: () => fetchAllProducts(filters),
-
-    // Optional: Additional options
-    // staleTime and cacheTime are inherited from QueryClient defaults
-    // But you can override them per query if needed
+    queryKey: ['products', firestoreFilters],
+    queryFn: () =>
+      fetchAllProductsFromFirestore({
+        ...firestoreFilters,
+        status: 'active',
+      }),
+    staleTime: 10 * 60 * 1000, // 10 minutes - data stays fresh longer
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache longer
+    refetchOnMount: false, // Don't refetch if cached data exists - instant loading
   });
 }
 
@@ -52,4 +70,3 @@ export function useProducts(
 //     },
 //   });
 // }
-
