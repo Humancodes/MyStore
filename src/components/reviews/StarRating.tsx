@@ -36,7 +36,6 @@ export default function StarRating({
 
   const handleMouseEnter = (value: number) => {
     if (interactive) {
-      // Optional: Add hover effect
     }
   };
 

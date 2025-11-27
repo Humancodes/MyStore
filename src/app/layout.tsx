@@ -7,6 +7,7 @@ import ReduxProvider from '@/providers/ReduxProvider';
 import QueryProvider from '@/providers/QueryProvider';
 import AuthProvider from '@/providers/AuthProvider';
 import FirestoreSyncProvider from '@/providers/FirestoreSyncProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 import { Toaster } from 'sonner';
 
 const geistSans = Geist({
@@ -35,18 +36,25 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <QueryProvider>
-          <ReduxProvider>
-            <AuthProvider>
-              <FirestoreSyncProvider>
-                <Header />
-                {children}
-                <Footer />
-                <Toaster position="top-right" />
-              </FirestoreSyncProvider>
-            </AuthProvider>
-          </ReduxProvider>
-        </QueryProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <QueryProvider>
+            <ReduxProvider>
+              <AuthProvider>
+                <FirestoreSyncProvider>
+                  <Header />
+                  {children}
+                  <Footer />
+                  <Toaster position="top-right" />
+                </FirestoreSyncProvider>
+              </AuthProvider>
+            </ReduxProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import CartIcon from '@/components/cart/CartIcon';
 import UserMenu from '@/components/layout/UserMenu';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,7 +25,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
+    <header className="sticky top-0 z-50 w-full border-b bg-white dark:bg-gray-900 shadow-sm">
       {/* Top Header Bar */}
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between gap-4 py-3">
@@ -59,6 +60,9 @@ export default function Header() {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Mobile Search */}
             <Button variant="ghost" size="icon" className="sm:hidden">
               <Search className="h-5 w-5" />
