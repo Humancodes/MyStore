@@ -9,7 +9,6 @@ import { Loader2 } from 'lucide-react';
 export default function ProductsPage() {
   const searchParams = useSearchParams();
   
-  // Build filters from URL params - useMemo to stabilize query key
   const filters = useMemo(() => {
     const filterObj: {
       title?: string;
@@ -31,14 +30,10 @@ export default function ProductsPage() {
     return filterObj;
   }, [searchParams]);
 
-  // Use React Query for caching
-  // Always show cached data if it exists, even if refetching
   const { data, isLoading, error, isFetching } = useProducts(filters);
   
-  // Use cached data immediately if available, otherwise empty array
   const products = data ?? [];
   
-  // Get categories
   const categories: Array<{ id: number; name: string; slug: string; image: string }> = [];
   const uniqueCategories = Array.from(new Set(products.map(p => p.category)));
   uniqueCategories.forEach((cat, index) => {
@@ -76,7 +71,6 @@ export default function ProductsPage() {
 
   return (
     <>
-      {/* Optional: Show subtle indicator if refetching in background */}
       {isFetching && data && data.length > 0 && (
         <div className="fixed top-20 right-4 z-50 bg-primary/90 text-white px-3 py-1 rounded-full text-xs shadow-lg animate-pulse">
           Updating...

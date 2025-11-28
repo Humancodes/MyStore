@@ -14,12 +14,10 @@ export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState(queryParam);
   const debouncedQuery = useDebounce(searchQuery, 300);
 
-  // Update search query when URL param changes
   useEffect(() => {
     setSearchQuery(queryParam);
   }, [queryParam]);
 
-  // Add to search history when query changes
   useEffect(() => {
     if (debouncedQuery.trim()) {
       addToSearchHistory(debouncedQuery);
@@ -30,7 +28,6 @@ export default function SearchPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           {debouncedQuery ? (
@@ -58,7 +55,6 @@ export default function SearchPage() {
         )}
       </div>
 
-      {/* Loading State */}
       {isLoading && (
         <div className="flex flex-col items-center justify-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
@@ -66,7 +62,6 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* Error State */}
       {error && (
         <div className="flex flex-col items-center justify-center py-12">
           <SearchIcon className="w-12 h-12 text-gray-400 mb-4" />
@@ -79,7 +74,6 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* No Query State */}
       {!debouncedQuery && !isLoading && (
         <div className="flex flex-col items-center justify-center py-12">
           <SearchIcon className="w-12 h-12 text-gray-400 mb-4" />
@@ -92,7 +86,6 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* No Results State */}
       {!isLoading && !error && debouncedQuery && products && products.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12">
           <SearchIcon className="w-12 h-12 text-gray-400 mb-4" />
@@ -107,7 +100,6 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* Results Grid */}
       {!isLoading && !error && products && products.length > 0 && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

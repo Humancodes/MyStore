@@ -9,12 +9,10 @@ import CartItem from '@/components/cart/CartItem';
 
 export default function CartPage() {
   const dispatch = useAppDispatch();
-  // Read cart state from store
   const { items, totalItems, totalPrice } = useAppSelector((state) => state.cart);
   
   const handleClearCart = () => {
     if (confirm('Are you sure you want to clear your cart?')) {
-      // Dispatch action to clear cart
       dispatch(clearCart());
     }
   };
@@ -34,7 +32,6 @@ export default function CartPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
               <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -58,7 +55,6 @@ export default function CartPage() {
             </div>
           </div>
           
-          {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg border border-gray-200 p-6 sticky top-4">
               <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
@@ -97,7 +93,6 @@ export default function CartPage() {
                 </Link>
               </div>
               
-              {/* Security Badge */}
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <svg

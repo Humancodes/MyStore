@@ -25,7 +25,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const averageRating = reviews.length > 0 ? calculateAverageRating(reviews) : product.rating.rate;
   const reviewCount = reviews.length > 0 ? reviews.length : product.rating.count;
 
-  // Calculate discount (mock - 20% off)
   const originalPrice = product.price * 1.2;
   const discount = ((originalPrice - product.price) / originalPrice) * 100;
 
@@ -44,14 +43,12 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
   return (
     <div className="space-y-5">
-      {/* Product Title */}
       <div>
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
           {product.title}
         </h1>
       </div>
 
-      {/* Rating & Reviews */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded">
@@ -68,7 +65,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </div>
       </div>
 
-      {/* Pricing */}
       <div className="space-y-2">
         <div className="flex items-baseline gap-3">
           <span className="text-3xl md:text-4xl font-bold text-gray-900">
@@ -86,7 +82,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </p>
       </div>
 
-      {/* Offers */}
       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
         <h3 className="font-semibold text-gray-900 mb-3">Available Offers</h3>
         <ul className="space-y-2.5 text-sm">
@@ -114,7 +109,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </button>
       </div>
 
-      {/* Purchase Options */}
       <div className="space-y-2.5">
         <div className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-primary transition-colors">
           <label className="flex items-center gap-3 cursor-pointer flex-1">
@@ -161,7 +155,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         )}
       </div>
 
-      {/* Quantity Selector */}
       <div className="flex items-center gap-4">
         <span className="text-sm font-medium text-gray-900">Quantity:</span>
         <div className="flex items-center gap-2 border border-gray-300 rounded-md">
@@ -187,7 +180,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </div>
       </div>
 
-      {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4">
         <AddToCartButton
           product={product}
@@ -205,7 +197,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </Button>
       </div>
 
-      {/* Delivery & Warranty Info */}
       <div className="border-t border-gray-200 pt-4 space-y-3">
         <div className="flex items-start gap-3">
           <Truck className="h-5 w-5 text-gray-600 mt-0.5" />

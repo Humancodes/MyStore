@@ -244,7 +244,6 @@ export default function OrderDetailsPage() {
                   className="w-full text-red-600 hover:text-red-700"
                   onClick={() => {
                     if (confirm('Are you sure you want to cancel this order?')) {
-                      // TODO: Implement cancel order
                       alert('Cancel order functionality coming soon');
                     }
                   }}

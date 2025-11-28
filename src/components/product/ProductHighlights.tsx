@@ -6,7 +6,6 @@ interface ProductHighlightsProps {
 }
 
 export default function ProductHighlights({ product }: ProductHighlightsProps) {
-  // Mock highlights based on category
   const getHighlights = () => {
     const category = product.category.toLowerCase();
     
@@ -60,7 +59,6 @@ export default function ProductHighlights({ product }: ProductHighlightsProps) {
         })}
       </div>
       
-      {/* Additional Info */}
       <div className="mt-6 pt-6 border-t border-gray-200">
         <div className="space-y-3 text-sm">
           <div className="flex items-center justify-between">

@@ -18,13 +18,11 @@ import { useNotification, notificationMessages } from '@/hooks/useNotification';
 import PaymentProcessing from '@/components/checkout/PaymentProcessing';
 import PaymentFormSkeleton from '@/components/skeletons/PaymentFormSkeleton';
 
-// Lazy load PaymentForm - heavy component with Stripe integration
-// Import the type first
 import type { PaymentFormRef } from '@/components/checkout/PaymentForm';
 
 const PaymentForm = dynamic(() => import('@/components/checkout/PaymentForm'), {
   loading: () => <PaymentFormSkeleton />,
-  ssr: false, // Payment forms don't need SSR
+  ssr: false,
 });
 
 type CheckoutStep = 'shipping' | 'payment' | 'review' | 'processing';

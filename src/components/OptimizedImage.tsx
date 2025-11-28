@@ -23,7 +23,6 @@ export default function OptimizedImage({
   const [imgSrc, setImgSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
 
-  // Fallback placeholder image
   const placeholder = `https://via.placeholder.com/400x400/cccccc/666666?text=${encodeURIComponent(alt.slice(0, 20))}`;
 
   const handleError = () => {

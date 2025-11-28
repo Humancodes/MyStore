@@ -19,7 +19,7 @@ import { highlightText } from '@/utils/highlightText';
 
 interface ProductCardProps {
   product: Product;
-  highlightQuery?: string; // Optional search query to highlight in title
+  highlightQuery?: string;
 }
 
 function isValidImageUrl(url: string): boolean {
@@ -93,7 +93,6 @@ export default function ProductCard({ product, highlightQuery }: ProductCardProp
               onError={() => setImgError(true)}
               unoptimized={imageSrc === placeholder}
             />
-            {/* Wishlist Button - Top Right */}
             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
               <WishlistButton
                 product={product}

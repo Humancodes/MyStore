@@ -5,7 +5,6 @@ interface ProductDescriptionProps {
 }
 
 export default function ProductDescription({ product }: ProductDescriptionProps) {
-  // Mock specifications (in real app, this would come from product data)
   const specifications = [
     { label: 'Category', value: product.category },
     { label: 'Brand', value: 'MyStore' },
@@ -17,7 +16,6 @@ export default function ProductDescription({ product }: ProductDescriptionProps)
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-8">
-      {/* Product Description */}
       <section>
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Product Description</h2>
         <div className="prose max-w-none">
@@ -32,7 +30,6 @@ export default function ProductDescription({ product }: ProductDescriptionProps)
         </div>
       </section>
 
-      {/* Specifications */}
       <section>
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Specifications</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

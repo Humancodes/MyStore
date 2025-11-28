@@ -8,10 +8,9 @@ import ProductsGrid from './ProductsGrid';
 import FilterSidebarSkeleton from '@/components/skeletons/FilterSidebarSkeleton';
 import type { Product, Category } from '@/types/product';
 
-// Lazy load FilterSidebar - only loads when filters are opened
 const FilterSidebar = dynamic(() => import('./FilterSidebar'), {
   loading: () => <FilterSidebarSkeleton />,
-  ssr: false, // Filter sidebar doesn't need SSR
+  ssr: false,
 });
 
 interface ProductsPageClientProps {
@@ -45,7 +44,6 @@ export default function ProductsPageClient({
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Filter Sidebar */}
         <div className="lg:w-80 shrink-0">
           <FilterSidebar
             isOpen={isFilterOpen}
@@ -53,9 +51,7 @@ export default function ProductsPageClient({
           />
         </div>
 
-        {/* Main Content */}
         <div className="flex-1">
-          {/* Header */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -77,7 +73,6 @@ export default function ProductsPageClient({
               </Button>
             </div>
 
-            {/* Active Filters Display */}
             {hasActiveFilters && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {filters.title && (
@@ -99,7 +94,6 @@ export default function ProductsPageClient({
             )}
           </div>
 
-          {/* Products Grid */}
           <ProductsGrid products={products} />
         </div>
       </div>

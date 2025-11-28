@@ -17,7 +17,6 @@ export default function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
   const searchParams = useSearchParams();
   const { data: categories = [], isLoading: loading } = useCategories();
 
-  // Filter state from URL params
   const [title, setTitle] = useState(searchParams.get('title') || '');
   const [priceMin, setPriceMin] = useState(searchParams.get('price_min') || '');
   const [priceMax, setPriceMax] = useState(searchParams.get('price_max') || '');
@@ -33,7 +32,6 @@ export default function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
     if (priceMin) params.set('price_min', priceMin);
     if (priceMax) params.set('price_max', priceMax);
     if (selectedCategory) {
-      // Check if it's a number (categoryId) or string (categorySlug)
       const categoryId = parseInt(selectedCategory);
       if (!isNaN(categoryId)) {
         params.set('categoryId', selectedCategory);
@@ -59,7 +57,6 @@ export default function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
 
   return (
     <>
-      {/* Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -67,14 +64,12 @@ export default function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`fixed lg:sticky top-0 left-0 h-full w-80 bg-white border-r border-gray-200 z-50 lg:z-auto transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } overflow-y-auto`}
       >
         <div className="p-6">
-          {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <SlidersHorizontal className="h-5 w-5 text-primary" />
@@ -90,7 +85,6 @@ export default function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
             </Button>
           </div>
 
-          {/* Search/Title Filter */}
           <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-900 mb-2">
               Search Products
@@ -104,7 +98,6 @@ export default function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
             />
           </div>
 
-          {/* Price Range Filter */}
           <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-900 mb-3">
               Price Range
@@ -131,7 +124,6 @@ export default function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
             </div>
           </div>
 
-          {/* Category Filter */}
           <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-900 mb-3">
               Category
@@ -171,7 +163,6 @@ export default function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
             )}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-3 sticky bottom-0 bg-white pt-4 border-t">
             <Button
               variant="outline"

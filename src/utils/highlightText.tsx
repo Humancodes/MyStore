@@ -9,7 +9,6 @@ export function highlightText(
     return <>{text}</>;
   }
 
-  // Escape special regex characters in search query
   const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regex = new RegExp(`(${escapedQuery})`, 'gi');
   const parts = text.split(regex);
@@ -17,7 +16,6 @@ export function highlightText(
   return (
     <>
       {parts.map((part, index) => {
-        // Check if this part matches the search query (case-insensitive)
         if (part.toLowerCase() === searchQuery.toLowerCase()) {
           return (
             <span key={index} className={className}>

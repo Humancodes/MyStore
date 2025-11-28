@@ -47,7 +47,6 @@ export default function CartItem({ item }: CartItemProps) {
   
   return (
     <div className="flex gap-4 p-4 border-b border-gray-200">
-      {/* Product Image */}
       <div className="relative w-24 h-24 flex-shrink-0">
         <Image
           src={item.image}
@@ -58,12 +57,10 @@ export default function CartItem({ item }: CartItemProps) {
         />
       </div>
       
-      {/* Product Info */}
       <div className="flex-1">
         <h3 className="font-medium text-gray-900">{item.title}</h3>
         <p className="text-sm text-gray-500 mt-1">${item.price.toFixed(2)} each</p>
         
-        {/* Quantity Controls */}
         <div className="flex items-center gap-2 mt-3">
           <Button
             variant="outline"
@@ -85,7 +82,6 @@ export default function CartItem({ item }: CartItemProps) {
         </div>
       </div>
       
-      {/* Price & Remove */}
       <div className="flex flex-col items-end justify-between">
         <p className="font-semibold text-gray-900">
           ${(item.price * item.quantity).toFixed(2)}

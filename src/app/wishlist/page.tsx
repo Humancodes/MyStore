@@ -13,7 +13,6 @@ export default function WishlistPage() {
   return (
     <div className="min-h-screen bg-muted">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
         <div className="mb-8">
           <Link href="/" className="inline-block mb-4 cursor-pointer">
             <Button variant="ghost" className="gap-2 cursor-pointer">
@@ -34,7 +33,6 @@ export default function WishlistPage() {
           </div>
         </div>
 
-        {/* Wishlist Items */}
         {wishlistItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Heart className="h-16 w-16 text-gray-300 mb-4" />

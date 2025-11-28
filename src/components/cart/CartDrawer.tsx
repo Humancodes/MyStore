@@ -17,12 +17,10 @@ import Link from 'next/link';
 
 export default function CartDrawer() {
   const dispatch = useAppDispatch();
-  // Read cart state from store
   const { items, totalItems, totalPrice } = useAppSelector((state) => state.cart);
   
   const handleClearCart = () => {
     if (confirm('Are you sure you want to clear your cart?')) {
-      // Dispatch action to clear cart
       dispatch(clearCart());
     }
   };
@@ -54,7 +52,6 @@ export default function CartDrawer() {
         </SheetHeader>
         
         <div className="mt-6 flex flex-col h-[calc(100vh-200px)]">
-          {/* Cart Items */}
           <div className="flex-1 overflow-y-auto">
             {items.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
@@ -73,7 +70,6 @@ export default function CartDrawer() {
             )}
           </div>
           
-          {/* Cart Summary */}
           {items.length > 0 && (
             <div className="border-t border-gray-200 pt-4 space-y-4">
               <div className="flex justify-between text-lg font-semibold">

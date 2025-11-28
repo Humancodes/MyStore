@@ -15,17 +15,14 @@ export default function HeroCarousel({ products }: HeroCarouselProps) {
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-rotate images every 4 seconds
   useEffect(() => {
     if (products.length === 0 || products.length === 1) return;
 
-    // Clear any existing interval
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
 
-    // Only set interval if not paused
     if (!isPaused) {
       intervalRef.current = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % products.length);
@@ -40,7 +37,6 @@ export default function HeroCarousel({ products }: HeroCarouselProps) {
     };
   }, [isPaused, products.length]);
 
-  // Resume auto-play after 5 seconds of inactivity
   useEffect(() => {
     if (isPaused) {
       const resumeTimer = setTimeout(() => {
@@ -76,7 +72,6 @@ export default function HeroCarousel({ products }: HeroCarouselProps) {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Product Image */}
       <Image
         src={currentProduct.image}
         alt={currentProduct.title}
@@ -88,7 +83,6 @@ export default function HeroCarousel({ products }: HeroCarouselProps) {
         fetchPriority={currentIndex === 0 ? 'high' : 'auto'}
       />
 
-      {/* Navigation Arrows */}
       {products.length > 1 && (
         <>
           <Button
@@ -112,7 +106,6 @@ export default function HeroCarousel({ products }: HeroCarouselProps) {
         </>
       )}
 
-      {/* Dots Indicator */}
       {products.length > 1 && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
           {products.map((_, index) => (

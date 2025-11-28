@@ -50,10 +50,8 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white dark:bg-gray-900 shadow-sm">
-      {/* Top Header Bar */}
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between gap-4 py-3">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 cursor-pointer shrink-0">
             <div className="text-xl sm:text-2xl font-bold text-primary">MyStore</div>
             <span className="hidden text-xs text-primary md:block">
@@ -61,17 +59,13 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Search Bar - Hidden on mobile */}
           <div className="hidden md:flex flex-1 max-w-2xl mx-4">
             <SearchBar className="w-full" />
           </div>
 
-          {/* Right Side Actions */}
           <div className="flex items-center gap-1 sm:gap-2">
-            {/* Theme Toggle */}
             <ThemeToggle />
 
-            {/* Mobile Search */}
             <Sheet open={mobileSearchOpen} onOpenChange={setMobileSearchOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="sm:hidden">
@@ -93,7 +87,6 @@ export default function Header() {
               </SheetContent>
             </Sheet>
 
-            {/* Login / User Menu - Icon only on mobile */}
             {!authLoading && (
               <>
                 {user ? (
@@ -111,7 +104,6 @@ export default function Header() {
               </>
             )}
 
-            {/* Wishlist - Icon only on mobile */}
             <Link href="/wishlist" className="cursor-pointer">
               <Button variant="ghost" size="icon" className="relative cursor-pointer">
                 <Heart className="h-5 w-5" />
@@ -124,10 +116,8 @@ export default function Header() {
               </Button>
             </Link>
 
-            {/* Cart */}
             <CartIcon />
 
-            {/* Mobile Menu */}
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
@@ -290,7 +280,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Category Navigation Bar - Hidden on mobile */}
       <div className="hidden md:block border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <nav className="flex items-center gap-4 overflow-x-auto py-2 scrollbar-hide">

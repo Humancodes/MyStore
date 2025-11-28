@@ -1,15 +1,3 @@
-/**
- * Authentication Service
- *
- * This service handles all authentication operations:
- * - Email/Password signup
- * - Email/Password login
- * - Google Sign-In
- * - Logout
- * - Password reset
- * - User state management
- */
-
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -23,23 +11,18 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
-/**
- * Sign up a new user with email and password
- */
 export async function signUp(
   email: string,
   password: string,
   displayName?: string
 ): Promise<UserCredential> {
   try {
-    // Create user account
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
 
-    // Update user profile with display name if provided
     if (displayName && userCredential.user) {
       await updateProfile(userCredential.user, {
         displayName: displayName,
@@ -48,14 +31,10 @@ export async function signUp(
 
     return userCredential;
   } catch (error: any) {
-    // Handle specific Firebase errors
     throw handleAuthError(error);
   }
 }
 
-/**
- * Sign in an existing user with email and password
- */
 export async function signIn(
   email: string,
   password: string
@@ -67,13 +46,9 @@ export async function signIn(
   }
 }
 
-/**
- * Sign in with Google
- */
 export async function signInWithGoogle(): Promise<UserCredential> {
   try {
     const provider = new GoogleAuthProvider();
-    // Add additional scopes if needed
     provider.addScope('profile');
     provider.addScope('email');
 
@@ -83,9 +58,6 @@ export async function signInWithGoogle(): Promise<UserCredential> {
   }
 }
 
-/**
- * Sign out the current user
- */
 export async function logout(): Promise<void> {
   try {
     await signOut(auth);
@@ -94,9 +66,6 @@ export async function logout(): Promise<void> {
   }
 }
 
-/**
- * Send password reset email
- */
 export async function resetPassword(email: string): Promise<void> {
   try {
     await sendPasswordResetEmail(auth, email);
@@ -105,16 +74,10 @@ export async function resetPassword(email: string): Promise<void> {
   }
 }
 
-/**
- * Get current user
- */
 export function getCurrentUser(): User | null {
   return auth.currentUser;
 }
 
-/**
- * Handle Firebase authentication errors and convert to user-friendly messages
- */
 function handleAuthError(error: any): Error {
   let message = 'An error occurred during authentication';
 

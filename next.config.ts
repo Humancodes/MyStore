@@ -1,6 +1,5 @@
 import type { NextConfig } from 'next';
 
-// Conditionally load bundle analyzer
 const withBundleAnalyzer =
   process.env.ANALYZE === 'true'
     ? require('@next/bundle-analyzer')({

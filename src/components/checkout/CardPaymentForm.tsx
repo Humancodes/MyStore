@@ -10,7 +10,6 @@ import { Input } from '@/components/ui/input';
 import StripeProvider from '@/providers/StripeProvider';
 import { Loader2 } from 'lucide-react';
 
-// Lazy load StripeCardForm - heavy component with Stripe Elements
 const StripeCardForm = lazy(() => import('./StripeCardForm'));
 
 interface CardPaymentFormProps {

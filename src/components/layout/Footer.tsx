@@ -6,9 +6,7 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="container mx-auto px-4 py-12">
-        {/* Main Footer Content */}
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-6">
-          {/* ABOUT */}
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase text-white">
               About
@@ -42,7 +40,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* HELP */}
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase text-white">
               Help
@@ -71,7 +68,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* CONSUMER POLICY */}
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase text-white">
               Consumer Policy
@@ -105,7 +101,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* MAIL US */}
           <div className="col-span-2 lg:col-span-1">
             <h3 className="mb-4 text-sm font-semibold uppercase text-white">
               Mail Us
@@ -121,7 +116,6 @@ export default function Footer() {
             </address>
           </div>
 
-          {/* REGISTERED OFFICE */}
           <div className="col-span-2 lg:col-span-1">
             <h3 className="mb-4 text-sm font-semibold uppercase text-white">
               Registered Office Address
@@ -142,7 +136,6 @@ export default function Footer() {
             </address>
           </div>
 
-          {/* SOCIAL */}
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase text-white">
               Social
@@ -180,10 +173,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Section */}
         <div className="mt-8 border-t border-gray-800 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            {/* Left Side - Utility Links */}
             <div className="flex flex-wrap items-center gap-6 text-sm">
               <Link href="/seller/register" className="flex items-center gap-2 hover:text-white cursor-pointer">
                 <span>🛍️</span>
@@ -203,12 +194,10 @@ export default function Footer() {
               </Link>
             </div>
 
-            {/* Center - Copyright */}
             <div className="text-sm text-gray-400">
               © 2024-2025 MyStore.com
             </div>
 
-            {/* Right Side - Payment Methods */}
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <span>We accept:</span>
               <div className="flex gap-1">

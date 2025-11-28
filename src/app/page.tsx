@@ -29,17 +29,14 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  // Fetch featured products from Firestore
   const allProducts = await fetchAllProductsFromFirestore();
   const featuredProducts = allProducts.slice(0, 8);
   const topDeals = allProducts.slice(8, 24);
-  // Products for hero carousel (first 10 products)
   const heroProducts = allProducts.slice(0, 10);
   const firstHeroImage = heroProducts[0]?.image;
 
   return (
     <>
-      {/* Preload LCP image for better performance */}
       {firstHeroImage && (
         <link
           rel="preload"
@@ -49,11 +46,9 @@ export default async function HomePage() {
         />
       )}
       <main className="min-h-screen bg-muted">
-      {/* Hero Banner Section */}
       <section className="relative overflow-hidden bg-gradient-to-r from-[#FF6600] via-[#FF7A00] to-[#FF6600]">
         <div className="container mx-auto px-4 py-4 md:py-6">
           <div className="grid items-center gap-4 md:grid-cols-2 md:gap-6">
-            {/* Left Side - Text Content */}
             <div className="text-white flex flex-col justify-center">
               <h1 className="mb-3 text-3xl font-bold leading-tight md:text-4xl lg:text-5xl xl:text-6xl">
                 Welcome to MyStore
@@ -83,7 +78,6 @@ export default async function HomePage() {
                 </Link>
               </div>
             </div>
-            {/* Right Side - Carousel */}
             <div className="relative hidden md:block w-full">
               <HeroCarouselClient products={heroProducts} />
             </div>
@@ -91,7 +85,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Categories Section */}
       <section className="container mx-auto px-4 py-8">
         <h2 className="mb-6 text-2xl font-bold text-foreground">Shop by Category</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -117,7 +110,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Featured Products Section */}
       <section className="container mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-foreground">Featured Products</h2>
@@ -148,7 +140,6 @@ export default async function HomePage() {
                   loading={index < 4 ? undefined : 'lazy'}
                   fetchPriority={index < 2 ? 'high' : 'auto'}
                 />
-                {/* Wishlist Button */}
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                   <WishlistButton
                     product={product}
@@ -175,7 +166,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Top Deals Section */}
       <section className="bg-white py-8">
         <div className="container mx-auto px-4">
           <div className="mb-6 flex items-center gap-2">
@@ -199,7 +189,6 @@ export default async function HomePage() {
                     quality={85}
                     loading="lazy"
                   />
-                  {/* Wishlist Button */}
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                     <WishlistButton
                       product={product}
@@ -234,7 +223,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="container mx-auto px-4 py-12">
         <div className="rounded-lg bg-gradient-to-r from-[#FF6600] to-[#FF7A00] p-8 text-center text-white">
           <h2 className="mb-4 text-3xl font-bold">Ready to Start Shopping?</h2>

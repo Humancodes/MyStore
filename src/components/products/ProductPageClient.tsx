@@ -21,10 +21,8 @@ interface ProductPageClientProps {
 export default function ProductPageClient({ productId }: ProductPageClientProps) {
   const router = useRouter();
   
-  // Fetch product with React Query for instant caching
   const { data: product, isLoading, error, isFetching } = useProductById(productId);
 
-  // Fetch similar products when we have the product category
   const similarProductsQuery = useProducts(
     useMemo(
       () => ({
@@ -36,7 +34,6 @@ export default function ProductPageClient({ productId }: ProductPageClientProps)
     )
   );
 
-  // Only show loading if there's NO cached data
   if (isLoading && product === undefined) {
     return (
       <div className="min-h-screen bg-muted">
@@ -49,7 +46,6 @@ export default function ProductPageClient({ productId }: ProductPageClientProps)
     );
   }
 
-  // Handle error
   if (error) {
     return (
       <div className="min-h-screen bg-muted">
@@ -62,7 +58,6 @@ export default function ProductPageClient({ productId }: ProductPageClientProps)
     );
   }
 
-  // Handle not found
   if (!product) {
     return (
       <div className="min-h-screen bg-muted">
@@ -84,7 +79,6 @@ export default function ProductPageClient({ productId }: ProductPageClientProps)
     );
   }
 
-  // Get similar products
   const allSimilarProducts = similarProductsQuery.data ?? [];
   const similarProducts = allSimilarProducts
     .filter((p) => p.id !== product.id)
@@ -110,33 +104,26 @@ export default function ProductPageClient({ productId }: ProductPageClientProps)
       )}
       <div className="min-h-screen bg-muted">
         <div className="container mx-auto px-4 py-6">
-          {/* Breadcrumb */}
           <Breadcrumb items={breadcrumbItems} />
 
-          {/* Main Product Section */}
           <div className="mt-6 grid gap-6 lg:grid-cols-12">
-            {/* Left Column - Image Gallery */}
             <div className="lg:col-span-5">
               <ProductImageGallery product={product} />
             </div>
 
-            {/* Center Column - Product Info */}
             <div className="lg:col-span-4">
               <ProductInfo product={product} />
             </div>
 
-            {/* Right Column - Highlights & Additional Info */}
             <div className="lg:col-span-3">
               <ProductHighlights product={product} />
             </div>
           </div>
 
-          {/* Product Description Section */}
           <div className="mt-8">
             <ProductDescription product={product} />
           </div>
 
-          {/* Reviews Section */}
           <div className="mt-12">
             <ProductReviews
               productId={String(product.id)}
@@ -144,7 +131,6 @@ export default function ProductPageClient({ productId }: ProductPageClientProps)
             />
           </div>
 
-          {/* Similar Products Section */}
           {similarProducts.length > 0 && (
             <div className="mt-12">
               <SimilarProducts products={similarProducts} />

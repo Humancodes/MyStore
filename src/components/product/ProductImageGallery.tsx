@@ -17,7 +17,6 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
-  // Use images array from product, or fallback to single image
   const images = product.images && product.images.length > 0 
     ? product.images 
     : [product.image];
@@ -42,7 +41,6 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
     setSelectedImage(index);
   };
 
-  // Touch handlers for swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
   };
@@ -66,7 +64,6 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
     }
   };
 
-  // Mouse drag handlers
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(0);
 
@@ -78,7 +75,6 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !hasMultipleImages) return;
-    // Prevent default to avoid image drag
     e.preventDefault();
   };
 
@@ -101,7 +97,6 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
 
   return (
     <div className="relative w-full">
-      {/* Carousel Container */}
       <div
         className="relative aspect-square w-full rounded-lg border border-gray-200 bg-white overflow-hidden"
         onTouchStart={handleTouchStart}
@@ -112,7 +107,6 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
         onMouseUp={handleMouseUp}
         onMouseLeave={() => setIsDragging(false)}
       >
-        {/* Images Container */}
         <div
           className="flex h-full transition-transform duration-300 ease-in-out"
           style={{
@@ -141,7 +135,6 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
           ))}
         </div>
 
-        {/* Navigation Arrows - Only show if multiple images */}
         {hasMultipleImages && (
           <>
             <Button
@@ -165,7 +158,6 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
           </>
         )}
 
-        {/* Wishlist Button */}
         <div className="absolute top-4 right-4 z-10">
           <WishlistButton
             product={product}
@@ -175,7 +167,6 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
           />
         </div>
 
-        {/* Dot Indicators - Only show if multiple images */}
         {hasMultipleImages && (
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
             {images.map((_, index) => (

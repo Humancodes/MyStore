@@ -30,12 +30,10 @@ export default function SearchAutocomplete({
   const { data: suggestions, isLoading } = useSearchSuggestions(debouncedQuery, 5);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Update search history when it changes
   useEffect(() => {
     setSearchHistory(getSearchHistory());
   }, [isOpen]);
 
-  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -49,7 +47,6 @@ export default function SearchAutocomplete({
     }
   }, [isOpen, onClose]);
 
-  // Close on escape key
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {

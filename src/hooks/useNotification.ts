@@ -34,9 +34,6 @@ export function useNotification() {
       });
     },
 
-    /**
-     * Show a warning notification
-     */
     warning: (
       message: string,
       options?: {
@@ -53,9 +50,6 @@ export function useNotification() {
       });
     },
 
-    /**
-     * Show an info notification
-     */
     info: (
       message: string,
       options?: {
@@ -72,16 +66,10 @@ export function useNotification() {
       });
     },
 
-    /**
-     * Show a loading notification (returns a function to update/dismiss)
-     */
     loading: (message: string) => {
       return toast.loading(message);
     },
 
-    /**
-     * Show a promise-based notification (loading -> success/error)
-     */
     promise: <T>(
       promise: Promise<T>,
       messages: {
@@ -97,25 +85,16 @@ export function useNotification() {
       });
     },
 
-    /**
-     * Dismiss a specific notification
-     */
     dismiss: (toastId?: string | number) => {
       toast.dismiss(toastId);
     },
 
-    /**
-     * Dismiss all notifications
-     */
     dismissAll: () => {
       toast.dismiss();
     },
   };
 }
 
-/**
- * Predefined notification messages for common actions
- */
 export const notificationMessages = {
   cart: {
     added: (productName: string) => `${productName} added to cart`,

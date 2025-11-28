@@ -26,7 +26,6 @@ export default function SearchBar({
   const [isAutocompleteOpen, setIsAutocompleteOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Update query when initialValue changes (e.g., from URL params)
   useEffect(() => {
     setQuery(initialValue);
   }, [initialValue]);
@@ -36,16 +35,9 @@ export default function SearchBar({
     const trimmedQuery = query.trim();
     
     if (trimmedQuery) {
-      // Add to search history
       addToSearchHistory(trimmedQuery);
-      
-      // Navigate to search page
       router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
-      
-      // Call optional callback
       onSearch?.(trimmedQuery);
-      
-      // Close autocomplete
       setIsAutocompleteOpen(false);
     }
   };
@@ -54,7 +46,6 @@ export default function SearchBar({
     const value = e.target.value;
     setQuery(value);
     
-    // Open autocomplete when user types
     if (value.trim().length > 0) {
       setIsAutocompleteOpen(true);
     } else {
