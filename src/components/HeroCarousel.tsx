@@ -83,7 +83,9 @@ export default function HeroCarousel({ products }: HeroCarouselProps) {
         fill
         className="rounded-lg object-contain p-2 md:p-3 transition-opacity duration-500"
         priority={currentIndex === 0}
-        unoptimized
+        sizes="(max-width: 768px) 100vw, 50vw"
+        quality={90}
+        fetchPriority={currentIndex === 0 ? 'high' : 'auto'}
       />
 
       {/* Navigation Arrows */}

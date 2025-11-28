@@ -1,11 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import FilterSidebar from './FilterSidebar';
 import ProductsGrid from './ProductsGrid';
+import FilterSidebarSkeleton from '@/components/skeletons/FilterSidebarSkeleton';
 import type { Product, Category } from '@/types/product';
+
+// Lazy load FilterSidebar - only loads when filters are opened
+const FilterSidebar = dynamic(() => import('./FilterSidebar'), {
+  loading: () => <FilterSidebarSkeleton />,
+  ssr: false, // Filter sidebar doesn't need SSR
+});
 
 interface ProductsPageClientProps {
   products: Product[];

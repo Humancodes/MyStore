@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cardPaymentSchema, type CardPaymentFormData } from '@/lib/validations/checkout';
+import { Suspense, lazy } from 'react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import StripeCardForm from './StripeCardForm';
 import StripeProvider from '@/providers/StripeProvider';
 import { Loader2 } from 'lucide-react';
+
+// Lazy load StripeCardForm - heavy component with Stripe Elements
+const StripeCardForm = lazy(() => import('./StripeCardForm'));
 
 interface CardPaymentFormProps {
   onChange: (data: CardPaymentFormData | null) => void;
@@ -170,20 +173,27 @@ export default function CardPaymentForm({
             },
           }}
         >
-          <StripeCardForm
-            onPaymentSuccess={(paymentIntentId) => {
-              onChange({
-                cardNumber: 'stripe',
-                expiryDate: '',
-                cvv: '',
-                cardName: '',
-              });
-              onStripePaymentSuccess?.(paymentIntentId);
-            }}
-            onPaymentError={(error) => {
-              onStripePaymentError?.(error);
-            }}
-          />
+          <Suspense fallback={
+            <div className="flex flex-col items-center justify-center py-8 space-y-4">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-gray-600">Loading payment form...</p>
+            </div>
+          }>
+            <StripeCardForm
+              onPaymentSuccess={(paymentIntentId) => {
+                onChange({
+                  cardNumber: 'stripe',
+                  expiryDate: '',
+                  cvv: '',
+                  cardName: '',
+                });
+                onStripePaymentSuccess?.(paymentIntentId);
+              }}
+              onPaymentError={(error) => {
+                onStripePaymentError?.(error);
+              }}
+            />
+          </Suspense>
         </StripeProvider>
       </div>
     );

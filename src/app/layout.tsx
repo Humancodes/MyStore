@@ -20,9 +20,46 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mystore.com';
+
 export const metadata: Metadata = {
-  title: 'MyStore - Your One-Stop Shop',
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: 'MyStore - Your One-Stop Shop',
+    template: '%s | MyStore',
+  },
   description: 'Discover amazing products at unbeatable prices. Shop now and enjoy fast delivery!',
+  keywords: ['online shopping', 'ecommerce', 'products', 'deals', 'shopping'],
+  authors: [{ name: 'MyStore' }],
+  creator: 'MyStore',
+  publisher: 'MyStore',
+  alternates: {
+    canonical: baseUrl,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: baseUrl,
+    siteName: 'MyStore',
+    title: 'MyStore - Your One-Stop Shop',
+    description: 'Discover amazing products at unbeatable prices. Shop now and enjoy fast delivery!',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'MyStore - Your One-Stop Shop',
+    description: 'Discover amazing products at unbeatable prices. Shop now and enjoy fast delivery!',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({

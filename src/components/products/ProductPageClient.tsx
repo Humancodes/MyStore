@@ -11,6 +11,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb';
 import ProductDescription from '@/components/product/ProductDescription';
 import SimilarProducts from '@/components/product/SimilarProducts';
 import ProductReviews from '@/components/reviews/ProductReviews';
+import ProductStructuredData from './ProductStructuredData';
 import { Loader2 } from 'lucide-react';
 
 interface ProductPageClientProps {
@@ -101,7 +102,7 @@ export default function ProductPageClient({ productId }: ProductPageClientProps)
 
   return (
     <>
-      {/* Optional: Show subtle indicator if refetching in background */}
+      <ProductStructuredData product={product} />
       {isFetching && product && (
         <div className="fixed top-20 right-4 z-50 bg-primary/90 text-white px-3 py-1 rounded-full text-xs shadow-lg animate-pulse">
           Updating...

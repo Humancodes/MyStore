@@ -131,6 +131,8 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
                 className="object-contain p-4"
                 sizes="(max-width: 768px) 100vw, 50vw"
                 priority={index === 0}
+                quality={90}
+                fetchPriority={index === 0 ? 'high' : 'auto'}
                 onError={() => handleImageError(index)}
                 unoptimized={imgErrors[index]}
                 draggable={false}

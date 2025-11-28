@@ -18,13 +18,29 @@ export async function generateMetadata({
         description: 'The product you are looking for does not exist',
       };
     }
+    const productUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://mystore.com'}/products/${product.id}`;
+    const productImage = product.images && product.images.length > 0 ? product.images[0] : product.image;
+
     return {
       title: `${product.title} | MyStore`,
       description: product.description,
+      alternates: {
+        canonical: productUrl,
+      },
       openGraph: {
         title: product.title,
         description: product.description,
-        images: product.images && product.images.length > 0 ? [product.images[0]] : [],
+        url: productUrl,
+        siteName: 'MyStore',
+        images: productImage ? [productImage] : [],
+        type: 'website',
+        locale: 'en_US',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: product.title,
+        description: product.description,
+        images: productImage ? [productImage] : [],
       },
     };
   } catch {

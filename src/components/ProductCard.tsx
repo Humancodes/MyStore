@@ -88,6 +88,8 @@ export default function ProductCard({ product, highlightQuery }: ProductCardProp
               fill
               className="object-contain group-hover:scale-105 transition-transform duration-300 p-2"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              quality={85}
+              loading="lazy"
               onError={() => setImgError(true)}
               unoptimized={imageSrc === placeholder}
             />

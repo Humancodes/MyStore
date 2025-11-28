@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { clearCart } from '@/store/slices/cartSlice';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ShippingForm, { type ShippingFormRef } from '@/components/checkout/ShippingForm';
-import PaymentForm, { type PaymentFormRef } from '@/components/checkout/PaymentForm';
 import type { ShippingAddressFormData, PaymentMethodFormData } from '@/lib/validations/checkout';
 import OrderSummary from '@/components/checkout/OrderSummary';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,16 @@ import { FirestoreService } from '@/services/firestoreService';
 import type { ShippingAddress, OrderItem } from '@/types/firestore';
 import { useNotification, notificationMessages } from '@/hooks/useNotification';
 import PaymentProcessing from '@/components/checkout/PaymentProcessing';
+import PaymentFormSkeleton from '@/components/skeletons/PaymentFormSkeleton';
+
+// Lazy load PaymentForm - heavy component with Stripe integration
+// Import the type first
+import type { PaymentFormRef } from '@/components/checkout/PaymentForm';
+
+const PaymentForm = dynamic(() => import('@/components/checkout/PaymentForm'), {
+  loading: () => <PaymentFormSkeleton />,
+  ssr: false, // Payment forms don't need SSR
+});
 
 type CheckoutStep = 'shipping' | 'payment' | 'review' | 'processing';
 
@@ -259,33 +269,35 @@ export default function CheckoutPage() {
                   )}
 
                   {currentStep === 'payment' && (
-                    <div>
-                      <PaymentForm
-                        ref={paymentFormRef}
-                        onSubmit={handlePaymentSubmit}
-                        defaultValues={paymentData || undefined}
-                        amount={total}
-                        onStripePaymentSuccess={handleStripePaymentSuccess}
-                        onStripePaymentError={handleStripePaymentError}
-                      />
-                      <div className="mt-6 flex justify-between">
-                        <Button
-                          variant="outline"
-                          onClick={() => setCurrentStep('shipping')}
-                        >
-                          Back
-                        </Button>
-                        <Button
-                          type="button"
-                          onClick={async () => {
-                            await paymentFormRef.current?.submit();
-                          }}
-                          size="lg"
-                        >
-                          Continue to Review
-                        </Button>
+                    <Suspense fallback={<PaymentFormSkeleton />}>
+                      <div>
+                        <PaymentForm
+                          ref={paymentFormRef}
+                          onSubmit={handlePaymentSubmit}
+                          defaultValues={paymentData || undefined}
+                          amount={total}
+                          onStripePaymentSuccess={handleStripePaymentSuccess}
+                          onStripePaymentError={handleStripePaymentError}
+                        />
+                        <div className="mt-6 flex justify-between">
+                          <Button
+                            variant="outline"
+                            onClick={() => setCurrentStep('shipping')}
+                          >
+                            Back
+                          </Button>
+                          <Button
+                            type="button"
+                            onClick={async () => {
+                              await paymentFormRef.current?.submit();
+                            }}
+                            size="lg"
+                          >
+                            Continue to Review
+                          </Button>
+                        </div>
                       </div>
-                    </div>
+                    </Suspense>
                   )}
 
                   {currentStep === 'review' && shippingData && paymentData && (

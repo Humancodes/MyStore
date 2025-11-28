@@ -1,10 +1,32 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { fetchAllProductsFromFirestore } from '@/services/productService';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Star, TrendingUp } from 'lucide-react';
-import HeroCarousel from '@/components/HeroCarousel';
+import HeroCarouselClient from '@/components/HeroCarouselClient';
 import WishlistButton from '@/components/wishlist/WishlistButton';
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mystore.com';
+
+export const metadata: Metadata = {
+  title: 'Home',
+  description: 'Discover amazing products at unbeatable prices. Shop now and enjoy fast delivery!',
+  alternates: {
+    canonical: baseUrl,
+  },
+  openGraph: {
+    title: 'MyStore - Your One-Stop Shop',
+    description: 'Discover amazing products at unbeatable prices. Shop now and enjoy fast delivery!',
+    url: baseUrl,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'MyStore - Your One-Stop Shop',
+    description: 'Discover amazing products at unbeatable prices. Shop now and enjoy fast delivery!',
+  },
+};
 
 export default async function HomePage() {
   // Fetch featured products from Firestore
@@ -13,9 +35,20 @@ export default async function HomePage() {
   const topDeals = allProducts.slice(8, 24);
   // Products for hero carousel (first 10 products)
   const heroProducts = allProducts.slice(0, 10);
+  const firstHeroImage = heroProducts[0]?.image;
 
   return (
-    <main className="min-h-screen bg-muted">
+    <>
+      {/* Preload LCP image for better performance */}
+      {firstHeroImage && (
+        <link
+          rel="preload"
+          as="image"
+          href={firstHeroImage}
+          fetchPriority="high"
+        />
+      )}
+      <main className="min-h-screen bg-muted">
       {/* Hero Banner Section */}
       <section className="relative overflow-hidden bg-gradient-to-r from-[#FF6600] via-[#FF7A00] to-[#FF6600]">
         <div className="container mx-auto px-4 py-4 md:py-6">
@@ -52,7 +85,7 @@ export default async function HomePage() {
             </div>
             {/* Right Side - Carousel */}
             <div className="relative hidden md:block w-full">
-              <HeroCarousel products={heroProducts} />
+              <HeroCarouselClient products={heroProducts} />
             </div>
           </div>
         </div>
@@ -97,7 +130,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {featuredProducts.map((product) => (
+          {featuredProducts.map((product, index) => (
             <Link
               key={product.id}
               href={`/products/${product.id}`}
@@ -110,7 +143,10 @@ export default async function HomePage() {
                   fill
                   className="object-contain transition-transform group-hover:scale-105 p-2"
                   sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                  unoptimized
+                  quality={85}
+                  priority={index < 4}
+                  loading={index < 4 ? undefined : 'lazy'}
+                  fetchPriority={index < 2 ? 'high' : 'auto'}
                 />
                 {/* Wishlist Button */}
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -159,8 +195,9 @@ export default async function HomePage() {
                     alt={product.title}
                     fill
                     className="object-contain transition-transform group-hover:scale-105 p-2"
-                    sizes="200px"
-                    unoptimized
+                    sizes="(max-width: 640px) 200px, 250px"
+                    quality={85}
+                    loading="lazy"
                   />
                   {/* Wishlist Button */}
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -216,5 +253,6 @@ export default async function HomePage() {
         </div>
       </section>
     </main>
+    </>
   );
 }
