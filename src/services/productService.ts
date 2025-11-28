@@ -1,5 +1,4 @@
 import { FirestoreService } from './firestoreService';
-import { fetchAllProducts as fetchAllProductsFromAPI } from './fakeStoreApi';
 import { where, QueryConstraint } from 'firebase/firestore';
 import type { FirestoreProduct } from '@/types/firestore';
 import type { Product } from '@/types/product';
@@ -72,38 +71,6 @@ async function fetchFirestoreProducts(filters?: {
   }
 }
 
-async function fetchAPIProducts(filters?: {
-  title?: string;
-  price_min?: number;
-  price_max?: number;
-  category?: string;
-}): Promise<Product[]> {
-  try {
-    const apiFilters: any = {};
-
-    if (filters?.title) {
-      apiFilters.title = filters.title;
-    }
-    if (filters?.price_min !== undefined) {
-      apiFilters.price_min = filters.price_min;
-    }
-    if (filters?.price_max !== undefined) {
-      apiFilters.price_max = filters.price_max;
-    }
-    if (filters?.category) {
-      apiFilters.categorySlug = filters.category
-        .toLowerCase()
-        .replace(/\s+/g, '-');
-    }
-
-    const apiProducts = await fetchAllProductsFromAPI(apiFilters);
-    return apiProducts;
-  } catch (error) {
-    console.error('Error fetching products from API:', error);
-    return [];
-  }
-}
-
 export async function fetchAllProductsFromFirestore(filters?: {
   title?: string;
   price_min?: number;
@@ -111,37 +78,18 @@ export async function fetchAllProductsFromFirestore(filters?: {
   category?: string;
   status?: 'active' | 'inactive' | 'out_of_stock';
 }): Promise<Product[]> {
-  const [firestoreProducts, apiProducts] = await Promise.all([
-    fetchFirestoreProducts(filters),
-    fetchAPIProducts(filters),
-  ]);
-
-  const mergedProducts = [...firestoreProducts, ...apiProducts];
-
-  return mergedProducts;
+  return fetchFirestoreProducts(filters);
 }
 
 export async function fetchProductByIdFromFirestore(
   productId: string | number
 ): Promise<Product | null> {
   try {
-    if (typeof productId === 'string') {
-      const product = await FirestoreService.getProduct(productId);
-      if (product) {
-        return convertFirestoreProductToProduct(product);
-      }
+    const productIdString = String(productId);
+    const product = await FirestoreService.getProduct(productIdString);
+    if (product) {
+      return convertFirestoreProductToProduct(product);
     }
-
-    const { fetchProductById } = await import('./fakeStoreApi');
-    if (typeof productId === 'number') {
-      try {
-        const apiProduct = await fetchProductById(productId);
-        return apiProduct;
-      } catch {
-        return null;
-      }
-    }
-
     return null;
   } catch (error) {
     console.error('Error fetching product:', error);
@@ -158,15 +106,10 @@ export async function getCategoriesFromProducts(): Promise<
   }>
 > {
   try {
-    const [firestoreProducts, apiProducts] = await Promise.all([
-      fetchFirestoreProducts({ status: 'active' }),
-      fetchAPIProducts(),
-    ]);
-
-    const allProducts = [...firestoreProducts, ...apiProducts];
+    const products = await fetchFirestoreProducts({ status: 'active' });
 
     const categorySet = new Set<string>();
-    allProducts.forEach(p => {
+    products.forEach(p => {
       if (p.category) {
         categorySet.add(p.category);
       }

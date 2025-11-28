@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { X, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import type { Category } from '@/types/product';
-import { fetchCategories } from '@/services/fakeStoreApi';
+import { useCategories } from '@/hooks/useCategories';
 
 interface FilterSidebarProps {
   isOpen: boolean;
@@ -16,8 +15,7 @@ interface FilterSidebarProps {
 export default function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: categories = [], isLoading: loading } = useCategories();
 
   // Filter state from URL params
   const [title, setTitle] = useState(searchParams.get('title') || '');
@@ -27,13 +25,6 @@ export default function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
     searchParams.get('categoryId') || searchParams.get('categorySlug') || ''
   );
 
-  useEffect(() => {
-    // Load categories
-    fetchCategories()
-      .then(setCategories)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
 
   const applyFilters = () => {
     const params = new URLSearchParams();

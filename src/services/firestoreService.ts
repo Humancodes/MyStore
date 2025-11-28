@@ -135,6 +135,24 @@ export class FirestoreService {
     return productRef.id;
   }
 
+  static async createProductWithId(
+    productId: string,
+    productData: Omit<
+      FirestoreProduct,
+      'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'
+    >
+  ): Promise<string> {
+    const productRef = doc(db, COLLECTIONS.PRODUCTS, productId);
+    await setDoc(productRef, {
+      ...productData,
+      rating: 0,
+      reviewCount: 0,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+    return productRef.id;
+  }
+
   static async getProduct(productId: string): Promise<FirestoreProduct | null> {
     const productRef = doc(db, COLLECTIONS.PRODUCTS, productId);
     const productSnap = await getDoc(productRef);
