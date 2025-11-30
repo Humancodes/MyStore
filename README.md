@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MyStore - E-Commerce Multi-Vendor Platform
 
-## Getting Started
+A modern, full-featured e-commerce platform built with Next.js 15, featuring multi-vendor support, real-time inventory management, and seamless payment integration.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Core Features
+- **Product Management**: Browse, search, and filter products with real-time updates
+- **Shopping Cart**: Persistent cart with Redux state management
+- **Wishlist**: Save favorite products for later
+- **User Authentication**: Email/password and Google Sign-In via Firebase
+- **Role-Based Access**: Buyer, Seller, and Admin roles with protected routes
+- **Payment Integration**: Stripe payment gateway for secure checkout
+- **Order Management**: Complete order tracking and history
+- **Product Reviews**: User reviews and ratings system
+- **Search & Filters**: Advanced product search with autocomplete
+- **Responsive Design**: Mobile-first design with dark/light mode support
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Seller Features
+- **Seller Dashboard**: Analytics, order management, and product management
+- **Product Management**: Add, edit, and manage products with image uploads
+- **Order Tracking**: View and manage customer orders
+- **Analytics**: Sales and performance insights
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Performance Optimizations
+- **Code Splitting**: Lazy loading for optimal bundle sizes
+- **Image Optimization**: Next.js Image component with AVIF/WebP support
+- **React Query Caching**: Instant loading with smart cache management
+- **SEO Optimized**: Dynamic metadata, sitemap, and structured data
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
-## Learn More
+### Frontend
+- **Framework**: Next.js 15.5.4 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **UI Components**: shadcn/ui (Radix UI)
+- **State Management**: Redux Toolkit + React Query (TanStack Query)
+- **Forms**: React Hook Form + Zod validation
+- **Icons**: Lucide React
 
-To learn more about Next.js, take a look at the following resources:
+### Backend & Services
+- **Authentication**: Firebase Auth
+- **Database**: Cloud Firestore
+- **Storage**: Firebase Storage / Cloudinary
+- **Payment**: Stripe
+- **Admin SDK**: Firebase Admin
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📋 Key Highlights
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Multi-Vendor Architecture**: Scalable marketplace where each seller manages independent product catalogs
+- **Real-time Updates**: Live inventory and order status updates
+- **Performance First**: Optimized for Core Web Vitals with code splitting and lazy loading
+- **SEO Ready**: Complete SEO implementation with dynamic metadata and structured data
+- **Production Ready**: Deployed and optimized for production use
 
-## Deploy on Vercel
+## 🎨 Design
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Modern, clean UI with shadcn/ui components
+- Fully responsive design (mobile, tablet, desktop)
+- Dark/Light mode support
+- Accessible components following WCAG guidelines
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+Built with ❤️ using Next.js and TypeScript
