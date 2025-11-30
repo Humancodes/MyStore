@@ -1,12 +1,12 @@
 'use client';
 
-import { useMemo } from 'react';
+import { Suspense, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useProducts } from '@/hooks/useProducts';
 import ProductsPageClient from '@/components/products/ProductsPageClient';
 import { Loader2 } from 'lucide-react';
 
-export default function ProductsPage() {
+function ProductsPageContent() {
   const searchParams = useSearchParams();
   
   const filters = useMemo(() => {
@@ -83,5 +83,19 @@ export default function ProductsPage() {
         filters={filters}
       />
     </>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    }>
+      <ProductsPageContent />
+    </Suspense>
   );
 }

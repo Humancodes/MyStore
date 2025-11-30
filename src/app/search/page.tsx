@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSearch } from '@/hooks/useSearch';
@@ -8,7 +9,7 @@ import ProductCard from '@/components/ProductCard';
 import { addToSearchHistory } from '@/utils/searchHistory';
 import { Loader2, Search as SearchIcon } from 'lucide-react';
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('q') || '';
   const [searchQuery, setSearchQuery] = useState(queryParam);
@@ -115,6 +116,21 @@ export default function SearchPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Loading search...</p>
+        </div>
+      </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
   );
 }
 

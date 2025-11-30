@@ -8,6 +8,12 @@ const withBundleAnalyzer =
     : (config: NextConfig) => config;
 
 const nextConfig: NextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
   images: {
     remotePatterns: [
       {

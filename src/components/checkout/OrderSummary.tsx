@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 export default function OrderSummary() {
   const { items, totalPrice, totalItems } = useAppSelector((state) => state.cart);
 
-  const shippingCost = 0;
+  const shippingCost: number = 0;
   const tax = totalPrice * 0.1;
   const total = totalPrice + shippingCost + tax;
 

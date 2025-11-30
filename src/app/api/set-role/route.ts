@@ -2,35 +2,48 @@ import { NextRequest, NextResponse } from 'next/server';
 import { setUserRoles, addUserRole } from '@/services/roleService';
 import type { UserRole } from '@/types/roles';
 
-let adminAuth: any = null;
+type AdminAuth = {
+  verifyIdToken: (token: string) => Promise<{ uid: string }>;
+  setCustomUserClaims: (uid: string, claims: { role: string }) => Promise<void>;
+};
 
-try {
-  const { getAuth } = require('firebase-admin/auth');
-  const { initializeApp, getApps, cert } = require('firebase-admin/app');
+let adminAuth: AdminAuth | null = null;
 
-  let adminApp: any;
+async function initializeAdminAuth() {
+  if (adminAuth) return adminAuth;
 
-  if (getApps().length === 0) {
-    const serviceAccount = {
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    };
+  try {
+    const adminAuthModule = await import('firebase-admin/auth');
+    const adminAppModule = await import('firebase-admin/app');
+    const { getAuth } = adminAuthModule;
+    const { initializeApp, getApps, cert } = adminAppModule;
 
-    if (serviceAccount.privateKey && serviceAccount.clientEmail) {
-      adminApp = initializeApp({
-        credential: cert(serviceAccount as any),
-      });
+    let adminApp;
+
+    if (getApps().length === 0) {
+      const serviceAccount = {
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      };
+
+      if (serviceAccount.privateKey && serviceAccount.clientEmail) {
+        adminApp = initializeApp({
+          credential: cert(serviceAccount),
+        });
+        adminAuth = getAuth(adminApp);
+      }
+    } else {
+      adminApp = getApps()[0];
       adminAuth = getAuth(adminApp);
     }
-  } else {
-    adminApp = getApps()[0];
-    adminAuth = getAuth(adminApp);
+    return adminAuth;
+  } catch (error) {
+    console.log(
+      'Firebase Admin SDK not available. Roles will be stored in Firestore only.'
+    );
+    return null;
   }
-} catch (error) {
-  console.log(
-    'Firebase Admin SDK not available. Roles will be stored in Firestore only.'
-  );
 }
 
 export async function POST(request: NextRequest) {
@@ -56,7 +69,8 @@ export async function POST(request: NextRequest) {
       await setUserRoles(uid, roles);
     }
 
-    if (!idToken || !adminAuth) {
+    const auth = await initializeAdminAuth();
+    if (!idToken || !auth) {
       return NextResponse.json({
         success: true,
         message: 'Role set in Firestore',
@@ -64,30 +78,29 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      const decodedToken = await adminAuth.verifyIdToken(idToken);
+      const decodedToken = await auth.verifyIdToken(idToken);
 
       if (decodedToken.uid !== uid) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
       }
 
-      await adminAuth.setCustomUserClaims(uid, { role });
+      await auth.setCustomUserClaims(uid, { role });
 
       return NextResponse.json({
         success: true,
         message: 'Role set in custom claims and Firestore',
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error setting custom claims:', error);
       return NextResponse.json({
         success: true,
         message: 'Role set in Firestore (custom claims failed)',
       });
     }
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
     console.error('Error in set-role API:', error);
-    return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
