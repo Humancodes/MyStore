@@ -59,8 +59,6 @@ A modern, full-featured e-commerce platform built with Next.js 15, featuring mul
 - Modern, clean UI with shadcn/ui components
 - Fully responsive design (mobile, tablet, desktop)
 - Dark/Light mode support
-- Accessible components following WCAG guidelines
 
 ---
-
 Built with ❤️ using Next.js and TypeScript
